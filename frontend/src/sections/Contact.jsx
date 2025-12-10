@@ -1,126 +1,129 @@
 import { motion } from 'framer-motion';
-import { Mail, Phone, Github, Linkedin, Send } from 'lucide-react';
+import { Send, Mail, MapPin, Phone } from 'lucide-react';
+import { useState } from 'react';
 
 const Contact = () => {
+    const [formState, setFormState] = useState({ name: '', email: '', message: '' });
+    const [isFocused, setIsFocused] = useState('');
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        // Handle submission logic
+    };
+
     return (
-        <section id="contact" className="w-full min-h-screen grid grid-cols-1 md:grid-cols-2 bg-black/50 relative">
+        <section id="contact" className="w-full min-h-screen flex items-center justify-center px-6 py-20 relative overflow-hidden">
+            <div className="max-w-7xl w-full mx-auto grid grid-cols-1 md:grid-cols-2 gap-16 lg:gap-24 relative z-10">
 
-            {/* Left: Contact Info */}
-            <div className="p-10 md:p-24 flex flex-col justify-between">
-                <div>
-                    <motion.h2
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6 }}
-                        className="text-5xl md:text-7xl font-display font-bold mb-8"
-                    >
-                        Let's <br />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-cyan-400">
-                            Collaborate
-                        </span>
-                    </motion.h2>
-                    <p className="text-gray-400 text-lg max-w-md">
-                        Have a project in mind or just want to chat about AI and Web Dev?
-                        I'm always open to new ideas and opportunities.
-                    </p>
-                </div>
+                {/* Contact Info */}
+                <motion.div
+                    initial={{ opacity: 0, x: -50 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.8 }}
+                    className="space-y-12"
+                >
+                    <div>
+                        <h2 className="text-5xl md:text-7xl font-display font-bold mb-6">
+                            Let's <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-cyan-400">Connect</span>
+                        </h2>
+                        <p className="text-gray-400 text-lg max-w-md leading-relaxed">
+                            Have a project in mind or just want to chat about AI and Web3?
+                            I'm always open to new opportunities and collaborations.
+                        </p>
+                    </div>
 
-                <div className="space-y-6 mt-12">
-                    <a href="mailto:npandyavrajesh31@gmail.com" className="flex items-center gap-4 text-xl hover:text-accent transition-colors group">
-                        <div className="p-3 bg-white/5 rounded-full group-hover:bg-white/10 transition-colors">
-                            <Mail size={24} />
-                        </div>
-                        npandyavrajesh31@gmail.com
-                    </a>
-                    <a href="tel:+919327220321" className="flex items-center gap-4 text-xl hover:text-accent transition-colors group">
-                        <div className="p-3 bg-white/5 rounded-full group-hover:bg-white/10 transition-colors">
-                            <Phone size={24} />
-                        </div>
-                        +91 93272 20321
-                    </a>
-                </div>
+                    <div className="space-y-8">
+                        <ContactItem icon={<Mail />} title="Email" value="hello@vrajesh.dev" />
+                        <ContactItem icon={<Phone />} title="Phone" value="+91 98765 43210" />
+                        <ContactItem icon={<MapPin />} title="Location" value="Vadodara, India" />
+                    </div>
+                </motion.div>
 
-                <div className="flex gap-6 mt-12">
-                    <a href="#" className="p-4 bg-white/5 rounded-full hover:bg-white/10 hover:text-accent transition-all hover:-translate-y-1">
-                        <Github size={24} />
-                    </a>
-                    <a href="#" className="p-4 bg-white/5 rounded-full hover:bg-white/10 hover:text-accent transition-all hover:-translate-y-1">
-                        <Linkedin size={24} />
-                    </a>
-                </div>
-
-                <footer className="mt-24 text-gray-500 text-sm">
-                    © {new Date().getFullYear()} Vrajesh Pandya. Built with React & Three.js.
-                </footer>
-            </div>
-
-            {/* Right: Form */}
-            <div className="bg-white/5 p-10 md:p-24 flex items-center">
-                <form className="w-full space-y-8">
-                    <div className="relative group">
-                        <input
+                {/* Contact Form */}
+                <motion.div
+                    initial={{ opacity: 0, x: 50 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.8, delay: 0.2 }}
+                    className="bg-white/5 backdrop-blur-xl border border-white/10 p-8 md:p-12 rounded-3xl"
+                >
+                    <form onSubmit={handleSubmit} className="space-y-8">
+                        <InputGroup
+                            label="Name"
+                            name="name"
                             type="text"
-                            id="name"
-                            required
-                            className="w-full bg-transparent border-b border-gray-700 py-4 text-white text-lg focus:outline-none focus:border-purple-500 transition-colors peer"
-                            placeholder=" "
+                            value={formState.name}
+                            onChange={e => setFormState({ ...formState, name: e.target.value })}
+                            isFocused={isFocused === 'name'}
+                            onFocus={() => setIsFocused('name')}
+                            onBlur={() => setIsFocused('')}
                         />
-                        <label
-                            htmlFor="name"
-                            className="absolute left-0 top-4 text-gray-500 transition-all duration-300 pointer-events-none 
-                                     peer-focus:-top-6 peer-focus:text-sm peer-focus:text-purple-500
-                                     peer-not-placeholder-shown:-top-6 peer-not-placeholder-shown:text-sm peer-not-placeholder-shown:text-purple-500"
-                        >
-                            Your Name
-                        </label>
-                    </div>
-
-                    <div className="relative group">
-                        <input
+                        <InputGroup
+                            label="Email"
+                            name="email"
                             type="email"
-                            id="email"
-                            required
-                            className="w-full bg-transparent border-b border-gray-700 py-4 text-white text-lg focus:outline-none focus:border-purple-500 transition-colors peer"
-                            placeholder=" "
+                            value={formState.email}
+                            onChange={e => setFormState({ ...formState, email: e.target.value })}
+                            isFocused={isFocused === 'email'}
+                            onFocus={() => setIsFocused('email')}
+                            onBlur={() => setIsFocused('')}
                         />
-                        <label
-                            htmlFor="email"
-                            className="absolute left-0 top-4 text-gray-500 transition-all duration-300 pointer-events-none 
-                                     peer-focus:-top-6 peer-focus:text-sm peer-focus:text-purple-500
-                                     peer-not-placeholder-shown:-top-6 peer-not-placeholder-shown:text-sm peer-not-placeholder-shown:text-purple-500"
-                        >
-                            Email Address
-                        </label>
-                    </div>
+                        <div className="relative group">
+                            <label className={`absolute left-0 transition-all duration-300 ${isFocused === 'message' || formState.message ? '-top-6 text-sm text-purple-400' : 'top-0 text-gray-500'}`}>
+                                Your Message
+                            </label>
+                            <textarea
+                                name="message"
+                                rows="4"
+                                value={formState.message}
+                                onChange={e => setFormState({ ...formState, message: e.target.value })}
+                                onFocus={() => setIsFocused('message')}
+                                onBlur={() => setIsFocused('')}
+                                className="w-full bg-transparent border-b border-gray-700 py-2 text-white focus:outline-none focus:border-purple-500 transition-colors resize-none"
+                            />
+                        </div>
 
-                    <div className="relative group">
-                        <textarea
-                            id="message"
-                            rows="4"
-                            required
-                            className="w-full bg-transparent border-b border-gray-700 py-4 text-white text-lg focus:outline-none focus:border-purple-500 transition-colors resize-none peer"
-                            placeholder=" "
-                        ></textarea>
-                        <label
-                            htmlFor="message"
-                            className="absolute left-0 top-4 text-gray-500 transition-all duration-300 pointer-events-none 
-                                     peer-focus:-top-6 peer-focus:text-sm peer-focus:text-purple-500
-                                     peer-not-placeholder-shown:-top-6 peer-not-placeholder-shown:text-sm peer-not-placeholder-shown:text-purple-500"
+                        <button
+                            type="submit"
+                            className="w-full py-4 bg-gradient-to-r from-purple-600 to-cyan-600 rounded-xl font-bold text-lg flex items-center justify-center gap-2 hover:opacity-90 transition-opacity"
                         >
-                            Your Message
-                        </label>
-                    </div>
+                            <Send size={20} /> Send Message
+                        </button>
+                    </form>
+                </motion.div>
 
-                    <button
-                        type="submit"
-                        className="px-8 py-4 bg-white text-black font-bold rounded-full flex items-center gap-2 hover:bg-purple-500 hover:text-white transition-all duration-300"
-                    >
-                        Send Message <Send size={18} />
-                    </button>
-                </form>
             </div>
         </section>
     );
 };
+
+const ContactItem = ({ icon, title, value }) => (
+    <div className="flex items-center gap-6 group cursor-pointer">
+        <div className="p-4 bg-white/5 rounded-2xl group-hover:bg-purple-500/20 transition-colors text-purple-400">
+            {icon}
+        </div>
+        <div>
+            <h4 className="text-gray-500 text-sm font-mono uppercase tracking-wider mb-1">{title}</h4>
+            <p className="text-xl font-semibold group-hover:text-purple-400 transition-colors">{value}</p>
+        </div>
+    </div>
+);
+
+const InputGroup = ({ label, name, type, value, onChange, isFocused, onFocus, onBlur }) => (
+    <div className="relative group">
+        <label className={`absolute left-0 transition-all duration-300 ${isFocused || value ? '-top-6 text-sm text-purple-400' : 'top-0 text-gray-500'}`}>
+            {label}
+        </label>
+        <input
+            type={type}
+            name={name}
+            value={value}
+            onChange={onChange}
+            onFocus={onFocus}
+            onBlur={onBlur}
+            className="w-full bg-transparent border-b border-gray-700 py-2 text-white focus:outline-none focus:border-purple-500 transition-colors"
+        />
+        <div className={`absolute bottom-0 left-0 h-[1px] bg-purple-500 transition-all duration-300 ${isFocused ? 'w-full' : 'w-0'}`} />
+    </div>
+);
 
 export default Contact;

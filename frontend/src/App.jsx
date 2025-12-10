@@ -6,6 +6,7 @@ import About from './sections/About';
 import Skills from './sections/Skills';
 import Projects from './sections/Projects';
 import Contact from './sections/Contact';
+import Footer from './components/Footer';
 import Background3D from './components/Background3D';
 import CustomCursor from './components/CustomCursor';
 import './index.css';
@@ -36,7 +37,8 @@ function App() {
   }, []);
 
   return (
-    <div className="relative w-full min-h-screen text-white bg-background overflow-x-hidden">
+    <div className="relative w-full min-h-screen text-white bg-background overflow-x-hidden selection:bg-purple-500/30">
+      <div className="bg-noise"></div>
       <CustomCursor />
       <Background3D />
       <Navbar />
@@ -47,6 +49,7 @@ function App() {
         <Skills />
         <Projects />
         <Contact />
+        <Footer />
       </main>
     </div>
   );

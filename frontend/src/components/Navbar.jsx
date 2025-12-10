@@ -1,3 +1,5 @@
+import { motion, useMotionValue, useTransform, useSpring } from 'framer-motion';
+import { useRef } from 'react';
 import { Link } from 'react-scroll';
 import { Home, User, Code, Briefcase, Mail } from 'lucide-react';
 
@@ -10,38 +12,59 @@ const Navbar = () => {
         { name: 'Contact', icon: <Mail size={20} />, to: 'contact' },
     ];
 
+    const mouseX = useMotionValue(Infinity);
+
     return (
         <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50">
-            <div className="flex items-center gap-2 px-6 py-3 rounded-full 
-                      bg-white/5 backdrop-blur-lg border border-white/10 
-                      shadow-[0_0_20px_rgba(0,0,0,0.5)]">
+            <motion.div
+                onMouseMove={(e) => mouseX.set(e.pageX)}
+                onMouseLeave={() => mouseX.set(Infinity)}
+                className="flex items-center gap-3 px-4 py-3 rounded-2xl bg-black/40 backdrop-blur-xl border border-white/10 shadow-2xl"
+            >
                 {navItems.map((item) => (
-                    <Link
-                        key={item.name}
-                        to={item.to}
-                        smooth={true}
-                        duration={700}
-                        spy={true}
-                        hashSpy={true}
-                        activeClass="bg-white/20 text-white shadow-[0_0_10px_rgba(255,255,255,0.3)]"
-                        className="p-3 rounded-full text-gray-400 hover:text-white hover:bg-white/10 
-                       transition-all duration-300 cursor-pointer flex items-center justify-center 
-                       group relative"
-                    >
-                        {item.icon}
-
-                        {/* Tooltip */}
-                        <span className="absolute -top-10 left-1/2 -translate-x-1/2 
-                             bg-white/10 backdrop-blur-md border border-white/10 
-                             px-2 py-1 rounded text-xs text-white opacity-0 
-                             group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-                            {item.name}
-                        </span>
-                    </Link>
+                    <DockIcon key={item.name} mouseX={mouseX} item={item} />
                 ))}
-            </div>
+            </motion.div>
         </div>
     );
 };
+
+function DockIcon({ mouseX, item }) {
+    const ref = useRef(null);
+
+    const distance = useTransform(mouseX, (val) => {
+        const bounds = ref.current?.getBoundingClientRect() ?? { x: 0, width: 0 };
+        return val - bounds.x - bounds.width / 2;
+    });
+
+    const widthSync = useTransform(distance, [-150, 0, 150], [40, 80, 40]);
+    const width = useSpring(widthSync, { mass: 0.1, stiffness: 150, damping: 12 });
+
+    return (
+        <Link
+            to={item.to}
+            smooth={true}
+            duration={700}
+            spy={true}
+            hashSpy={true}
+            activeClass="!text-white !bg-white/20"
+            className="group relative"
+        >
+            <motion.div
+                ref={ref}
+                style={{ width }}
+                className="aspect-square rounded-full bg-white/5 border border-white/5 flex items-center justify-center text-gray-400 hover:text-white cursor-pointer transition-colors"
+                whileHover={{ y: -5 }}
+            >
+                <div>{item.icon}</div>
+            </motion.div>
+
+            {/* Tooltip */}
+            <span className="absolute -top-10 left-1/2 -translate-x-1/2 px-2 py-1 bg-black/80 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none border border-white/10">
+                {item.name}
+            </span>
+        </Link>
+    );
+}
 
 export default Navbar;

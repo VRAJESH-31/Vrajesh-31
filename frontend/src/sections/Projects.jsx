@@ -1,92 +1,140 @@
-import { motion } from 'framer-motion';
-import { ExternalLink, Github } from 'lucide-react';
+import { motion, useMotionTemplate, useMotionValue, useSpring } from 'framer-motion';
+import { ExternalLink, Github, ArrowUpRight } from 'lucide-react';
+import { useRef } from 'react';
 
 const projects = [
     {
         title: "CodeFolio Insights",
-        description: "A holistic developer analytics platform that aggregates data from GitHub and LeetCode to assess employability. Engineered a weighted scoring algorithm to calculate competency scores and integrated Google Gemini AI for a 'Strict Hiring Manager' persona. Features robust resume parsing and secure auth with Passport.js.",
+        category: "Analytics Platform",
+        description: "A holistic developer analytics platform aggregating data from GitHub and LeetCode. Features a weighted scoring algorithm and a 'Strict Hiring Manager' AI persona powered by Gemini.",
         tags: ["React", "Node.js", "Express", "MongoDB", "Gemini AI"],
-        links: { demo: "#", code: "#" }
+        links: { demo: "#", code: "https://github.com/VRAJESH-31/CodeFolio-Insights" },
+        image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=2070&auto=format&fit=crop"
     },
     {
         title: "VoyageGen",
-        description: "An advanced B2B Travel Quotation System featuring immersive 3D visuals with Three.js and Vanta.js. Architected a scalable RESTful API for real-time complex data orchestration. Implemented strict RBAC security using JWT and a logic engine for automated partner matching and cost calculation.",
+        category: "B2B Travel System",
+        description: "Advanced B2B Travel Quotation System with immersive 3D visuals. Architected a scalable RESTful API and implemented strict RBAC security with automated cost calculation engines.",
         tags: ["React", "Three.js", "Tailwind", "RBAC", "Node.js"],
-        links: { demo: "#", code: "#" }
+        links: { demo: "#", code: "#" },
+        image: "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?q=80&w=2021&auto=format&fit=crop"
     },
     {
-        title: "Real-Time Chat Application",
-        description: "A secure, full-stack chat platform built with Socket.IO for bidirectional communication. Features JWT-based session handling, a scalable MongoDB schema for message history, and optimistic UI updates. Supports typing indicators and online/offline user presence tracking.",
+        title: "Real-Time Chat",
+        category: "Communication",
+        description: "Secure, full-stack chat platform with Socket.IO. Features JWT session handling, optimistic UI updates, and a scalable message history schema.",
         tags: ["MERN", "Socket.IO", "JWT", "Zustand", "MongoDB"],
-        links: { demo: "#", code: "#" }
+        links: { demo: "#", code: "#" },
+        image: "https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=1974&auto=format&fit=crop"
     },
     {
-        title: "Smart Attendance System",
-        description: "Automated student attendance management system achieving 98%+ accuracy using a ResNet50 deep learning model with TensorFlow. Reduced manual errors by ~5% and administrative hours by ~10/week. Integrated Flask APIs with MongoDB for secure profile management.",
+        title: "Smart Attendance",
+        category: "Computer Vision",
+        description: "Automated attendance system achieving 98%+ accuracy using ResNet50. Reduced manual errors by 5% and administrative hours by 10/week.",
         tags: ["Python", "Flask", "TensorFlow", "ResNet50", "MongoDB"],
-        links: { demo: "#", code: "#" }
+        links: { demo: "#", code: "#" },
+        image: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=2070&auto=format&fit=crop"
     }
 ];
 
 const Projects = () => {
     return (
-        <section id="projects" className="w-full min-h-screen px-6 py-24 relative">
+        <section id="projects" className="w-full min-h-screen px-6 py-32 relative">
             <div className="max-w-7xl w-full mx-auto">
-                <motion.h2
-                    initial={{ opacity: 0 }}
-                    whileInView={{ opacity: 1 }}
-                    className="text-4xl md:text-6xl font-display font-bold mb-20 md:mb-32"
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    className="mb-20 space-y-4"
                 >
-                    Selected <br />
-                    <span className="ml-12 text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400">
-                        Works
-                    </span>
-                </motion.h2>
+                    <h2 className="text-4xl md:text-6xl font-display font-bold">
+                        Selected <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-cyan-400">Works</span>
+                    </h2>
+                    <p className="text-gray-400 text-lg max-w-xl">
+                        A collection of projects pushing the boundaries of web development and AI integration.
+                    </p>
+                </motion.div>
 
-                <div className="space-y-32">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     {projects.map((project, index) => (
-                        <motion.div
-                            key={index}
-                            initial={{ opacity: 0, y: 50 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.8 }}
-                            className={`flex flex-col md:flex-row gap-12 items-start ${index % 2 === 1 ? 'md:flex-row-reverse' : ''}`}
-                        >
-                            {/* Project Preview (Placeholder) */}
-                            <div className="w-full md:w-3/5 aspect-video bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl border border-white/10 overflow-hidden relative group">
-                                <div className="absolute inset-0 flex items-center justify-center text-gray-700 font-display text-4xl font-bold opacity-30 group-hover:opacity-50 transition-opacity">
-                                    {project.title}
-                                </div>
-                                <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-500" />
-                            </div>
-
-                            {/* Project Info */}
-                            <div className="w-full md:w-2/5 space-y-6 pt-4">
-                                <h3 className="text-3xl font-bold">{project.title}</h3>
-                                <p className="text-gray-400 text-lg leading-relaxed">
-                                    {project.description}
-                                </p>
-                                <div className="flex flex-wrap gap-2">
-                                    {project.tags.map(tag => (
-                                        <span key={tag} className="text-sm font-mono text-accent border border-accent/20 px-3 py-1 rounded-full">
-                                            {tag}
-                                        </span>
-                                    ))}
-                                </div>
-                                <div className="flex gap-6 pt-4">
-                                    <a href={project.links.demo} className="flex items-center gap-2 hover:text-white text-gray-400 transition-colors">
-                                        <ExternalLink size={20} /> Live Demo
-                                    </a>
-                                    <a href={project.links.code} className="flex items-center gap-2 hover:text-white text-gray-400 transition-colors">
-                                        <Github size={20} /> Source
-                                    </a>
-                                </div>
-                            </div>
-                        </motion.div>
+                        <ProjectCard key={index} project={project} index={index} />
                     ))}
                 </div>
             </div>
         </section>
+    );
+};
+
+const ProjectCard = ({ project, index }) => {
+    const mouseX = useMotionValue(0);
+    const mouseY = useMotionValue(0);
+    const ref = useRef(null);
+
+    const handleMouseMove = ({ clientX, clientY, currentTarget }) => {
+        const { left, top } = currentTarget.getBoundingClientRect();
+        mouseX.set(clientX - left);
+        mouseY.set(clientY - top);
+    };
+
+    return (
+        <motion.div
+            ref={ref}
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: index * 0.1 }}
+            onMouseMove={handleMouseMove}
+            className="group relative rounded-3xl bg-white/5 border border-white/10 overflow-hidden"
+        >
+            {/* Spotlight Effect */}
+            <motion.div
+                className="pointer-events-none absolute -inset-px rounded-3xl opacity-0 transition duration-300 group-hover:opacity-100"
+                style={{
+                    background: useMotionTemplate`
+                        radial-gradient(
+                            650px circle at ${mouseX}px ${mouseY}px,
+                            rgba(147, 51, 234, 0.15),
+                            transparent 80%
+                        )
+                    `,
+                }}
+            />
+
+            {/* Content */}
+            <div className="relative h-full flex flex-col">
+                <div className="aspect-video w-full overflow-hidden">
+                    <img
+                        src={project.image}
+                        alt={project.title}
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    />
+                    <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-500" />
+                </div>
+
+                <div className="p-8 flex-1 flex flex-col justify-between space-y-6 bg-black/20 backdrop-blur-sm">
+                    <div>
+                        <div className="flex justify-between items-start mb-4">
+                            <div>
+                                <span className="text-accent text-sm font-mono tracking-wider uppercase mb-2 block">{project.category}</span>
+                                <h3 className="text-2xl font-bold font-display group-hover:text-purple-400 transition-colors">{project.title}</h3>
+                            </div>
+                            <a href={project.links.code} target="_blank" rel="noopener noreferrer" className="p-2 bg-white/10 rounded-full hover:bg-white/20 transition-colors">
+                                <ArrowUpRight className="w-5 h-5" />
+                            </a>
+                        </div>
+                        <p className="text-gray-400 leading-relaxed text-sm md:text-base mb-6">
+                            {project.description}
+                        </p>
+                    </div>
+
+                    <div className="flex flex-wrap gap-2">
+                        {project.tags.map(tag => (
+                            <span key={tag} className="px-3 py-1 text-xs font-mono text-gray-300 bg-white/5 rounded-full border border-white/10">
+                                {tag}
+                            </span>
+                        ))}
+                    </div>
+                </div>
+            </div>
+        </motion.div>
     );
 };
 
