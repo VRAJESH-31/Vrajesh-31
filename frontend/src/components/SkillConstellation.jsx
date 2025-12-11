@@ -110,7 +110,7 @@ const getConnections = (groups) => {
                 color: group.color,
                 startName: group.name,
                 endName: child.name,
-                type: 'heirarchy'
+                type: 'hierarchy'
             });
         });
     });

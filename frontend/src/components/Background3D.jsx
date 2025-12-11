@@ -6,10 +6,10 @@ import * as random from 'maath/random';
 function Stars(props) {
     const ref = useRef();
     const [sphere] = useMemo(() => {
-        const data = random.inSphere(new Float32Array(5000), { radius: 1.5 });
+        const data = random.inSphere(new Float32Array(6000), { radius: 1.5 });
         // Check for NaN values just in case
         for (let i = 0; i < data.length; i++) {
-            if (isNaN(data[i])) data[i] = 0;
+            if (!Number.isFinite(data[i])) data[i] = 0;
         }
         return [data];
     }, []);

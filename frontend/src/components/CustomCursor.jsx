@@ -36,7 +36,7 @@ const CustomCursor = () => {
             y: mousePosition.y - 8,
             height: 16,
             width: 16,
-            backgroundColor: "white",
+            backgroundColor: "rgba(255, 255, 255, 1)",
             mixBlendMode: "difference"
         },
         hover: {

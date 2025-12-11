@@ -288,7 +288,7 @@ const ProjectDeck = ({ projects }) => {
                 Swipe to navigate • Click 'View Details' to flip
             </div>
 
-            <style jsx>{`
+            <style>{`
                .swiper-pagination-bullet {
                    background: white !important;
                    opacity: 0.2;
