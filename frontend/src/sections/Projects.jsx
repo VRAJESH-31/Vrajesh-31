@@ -6,23 +6,41 @@ const projects = [
     {
         title: "CodeFolio Insights",
         category: "Analytics Platform",
-        description: "A holistic developer analytics platform aggregating data from GitHub and LeetCode. Features a weighted scoring algorithm and a 'Strict Hiring Manager' AI persona powered by Gemini.",
-        tags: ["React", "Node.js", "Express", "MongoDB", "Gemini AI"],
+        summary: "Holistic developer analytics platform aggregating data from GitHub and LeetCode.",
+        description: [
+            "Engineered CodeFolio Insights, a holistic developer analytics platform that aggregates and evaluates data from GitHub and LeetCode to assess candidate employability, providing users with quantifiable performance scores and tailored improvement roadmaps.",
+            "Architected a scalable Node.js and Express backend to process real-time API data, implementing custom weighted algorithms that calculate normalized competency scores based on commit history, problem-solving streaks, and contest ratings.",
+            "Integrated Google Gemini AI to power a \"Strict Hiring Manager\" persona for critical resume parsing and analysis, while establishing secure user authentication using Passport.js with Google OAuth 2.0 and JWT for protected session management.",
+            "Developed a high-performance React frontend optimized with TanStack Query for efficient server state caching and Zustand for global state management, visualizing complex metrics through interactive Recharts and ApexCharts dashboards."
+        ],
+        tags: ["React", "Node.js", "Express", "MongoDB", "Gemini AI", "OAuth 2.0"],
         links: { demo: "#", code: "https://github.com/VRAJESH-31/CodeFolio-Insights" },
         image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=2070&auto=format&fit=crop"
     },
     {
         title: "VoyageGen",
         category: "B2B Travel System",
-        description: "Advanced B2B Travel Quotation System with immersive 3D visuals. Architected a scalable RESTful API and implemented strict RBAC security with automated cost calculation engines.",
-        tags: ["React", "Three.js", "Tailwind", "RBAC", "Node.js"],
+        summary: "Advanced B2B Travel Quotation System with immersive 3D visuals.",
+        description: [
+            "Developed a high-performance React frontend styled with Tailwind CSS, integrating Three.js and Vanta.js for immersive 3D visuals and Lenis for premium smooth scrolling to enhance user engagement.",
+            "Architected a scalable Node.js and Express RESTful API to orchestrate complex data flow between the client and database, ensuring high availability for real-time travel quotation requests.",
+            "Implemented robust security using JWT authentication and bcrypt hashing to establish a strict Role-Based Access Control (RBAC) system, protecting sensitive data across Agent, Partner, and User dashboards.",
+            "Engineered advanced filtering logic to automate partner matching and quote generation, enabling the system to instantly calculate costs and margins based on dynamic user preferences like budget and star rating."
+        ],
+        tags: ["React", "Node.js", "Express", "MongoDB", "GSAP", "Tailwind CSS", "JWT"],
         links: { demo: "#", code: "#" },
         image: "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?q=80&w=2021&auto=format&fit=crop"
     },
     {
         title: "Real-Time Chat",
         category: "Communication",
-        description: "Secure, full-stack chat platform with Socket.IO. Features JWT session handling, optimistic UI updates, and a scalable message history schema.",
+        summary: "Secure, full-stack chat platform with Socket.IO and JWT.",
+        description: [
+            "Built a secure full-stack chat application with user authentication and session handling powered by JWT, ensuring safe login, token validation, and protected API routes.",
+            "Integrated Socket.IO for real-time, bidirectional communication, enabling instant messaging, typing indicators, and online/offline user presence tracking.",
+            "Designed and optimized a scalable MongoDB schema to store users, conversations, and message history, ensuring efficient data retrieval under heavy usage.",
+            "Developed a responsive React UI with reusable components and smooth state management, providing a seamless chat experience across desktop and mobile devices."
+        ],
         tags: ["MERN", "Socket.IO", "JWT", "Zustand", "MongoDB"],
         links: { demo: "#", code: "#" },
         image: "https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=1974&auto=format&fit=crop"
@@ -30,111 +48,72 @@ const projects = [
     {
         title: "Smart Attendance",
         category: "Computer Vision",
-        description: "Automated attendance system achieving 98%+ accuracy using ResNet50. Reduced manual errors by 5% and administrative hours by 10/week.",
-        tags: ["Python", "Flask", "TensorFlow", "ResNet50", "MongoDB"],
+        summary: "Automated attendance system achieving 98%+ accuracy using ResNet50.",
+        description: [
+            "Designed and deployed a full-stack web application for automated student attendance management, reducing manual errors by 5% and saving ~10 administrative hours per week.",
+            "Implemented a ResNet50 deep learning model with TensorFlow, achieving 98%+ accuracy in face recognition across varied lighting and angles.",
+            "Integrated Flask APIs with a MongoDB database to securely manage student profiles and attendance records.",
+            "Enhanced reliability of attendance tracking by significantly reducing false positives, ensuring accurate and consistent student records."
+        ],
+        tags: ["Python", "Flask", "TensorFlow", "ResNet50", "MongoDB", "React"],
         links: { demo: "#", code: "#" },
         image: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=2070&auto=format&fit=crop"
+    },
+    {
+        title: "Notes Application",
+        category: "Productivity",
+        summary: "Full-stack notes app with complete CRUD functionality.",
+        description: [
+            "Created a full-stack notes app with complete CRUD functionality, enabling users to create, read, update, and delete notes seamlessly.",
+            "Built a secure REST API with Express.js and protected routes for personalized data access, ensuring user privacy and data integrity.",
+            "Used React Hooks for efficient state management in a single-page app environment, delivering a snappy and responsive user experience.",
+            "Implemented MongoDB persistence, allowing notes to sync across devices in real-time."
+        ],
+        tags: ["React", "Node.js", "Express", "MongoDB"],
+        links: { demo: "#", code: "#" },
+        image: "https://images.unsplash.com/photo-1517842645767-c639042777db?q=80&w=2070&auto=format&fit=crop"
+    },
+    {
+        title: "AI Code Reviewer",
+        category: "Developer Tool",
+        summary: "Smart, automated code quality feedback using Gemini AI.",
+        description: [
+            "Developed an innovative tool using the Gemini API to deliver smart, automated code quality feedback, helping developers catch bugs early.",
+            "Designed a Node.js backend for secure handling of API requests and code analysis, optimizing for low latency responses.",
+            "Built a React-based UI for intuitive code input and structured AI suggestions, featuring syntax highlighting and real-time feedback.",
+            "Added robust error handling and rate limiting to ensure reliability and stability during high-volume API interactions."
+        ],
+        tags: ["Node.js", "Gemini API", "React"],
+        links: { demo: "#", code: "#" },
+        image: "https://images.unsplash.com/photo-1555099962-4199c345e5dd?q=80&w=2070&auto=format&fit=crop"
     }
 ];
 
+import ProjectDeck from '../components/ProjectDeck';
+
 const Projects = () => {
     return (
-        <section id="projects" className="w-full min-h-screen px-6 py-32 relative">
-            <div className="max-w-7xl w-full mx-auto">
+        <section id="projects" className="w-full min-h-screen px-4 py-32 relative overflow-hidden">
+            <div className="max-w-[1400px] w-full mx-auto">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
-                    className="mb-20 space-y-4"
+                    className="mb-12 space-y-4 text-center z-10 relative"
                 >
                     <h2 className="text-4xl md:text-6xl font-display font-bold">
-                        Selected <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-cyan-400">Works</span>
+                        Mission <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-cyan-400">Control</span>
                     </h2>
-                    <p className="text-gray-400 text-lg max-w-xl">
-                        A collection of projects pushing the boundaries of web development and AI integration.
+                    <p className="text-gray-400 text-lg max-w-xl mx-auto">
+                        Swipe through my deployed missions. Active projects feature holographic tech stacks.
                     </p>
                 </motion.div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    {projects.map((project, index) => (
-                        <ProjectCard key={index} project={project} index={index} />
-                    ))}
+                {/* 3D Project Deck */}
+                <div className="w-full relative z-0">
+                    <ProjectDeck projects={projects} />
                 </div>
             </div>
         </section>
-    );
-};
-
-const ProjectCard = ({ project, index }) => {
-    const mouseX = useMotionValue(0);
-    const mouseY = useMotionValue(0);
-    const ref = useRef(null);
-
-    const handleMouseMove = ({ clientX, clientY, currentTarget }) => {
-        const { left, top } = currentTarget.getBoundingClientRect();
-        mouseX.set(clientX - left);
-        mouseY.set(clientY - top);
-    };
-
-    return (
-        <motion.div
-            ref={ref}
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: index * 0.1 }}
-            onMouseMove={handleMouseMove}
-            className="group relative rounded-3xl bg-white/5 border border-white/10 overflow-hidden"
-        >
-            {/* Spotlight Effect */}
-            <motion.div
-                className="pointer-events-none absolute -inset-px rounded-3xl opacity-0 transition duration-300 group-hover:opacity-100"
-                style={{
-                    background: useMotionTemplate`
-                        radial-gradient(
-                            650px circle at ${mouseX}px ${mouseY}px,
-                            rgba(147, 51, 234, 0.15),
-                            transparent 80%
-                        )
-                    `,
-                }}
-            />
-
-            {/* Content */}
-            <div className="relative h-full flex flex-col">
-                <div className="aspect-video w-full overflow-hidden">
-                    <img
-                        src={project.image}
-                        alt={project.title}
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                    />
-                    <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-500" />
-                </div>
-
-                <div className="p-8 flex-1 flex flex-col justify-between space-y-6 bg-black/20 backdrop-blur-sm">
-                    <div>
-                        <div className="flex justify-between items-start mb-4">
-                            <div>
-                                <span className="text-accent text-sm font-mono tracking-wider uppercase mb-2 block">{project.category}</span>
-                                <h3 className="text-2xl font-bold font-display group-hover:text-purple-400 transition-colors">{project.title}</h3>
-                            </div>
-                            <a href={project.links.code} target="_blank" rel="noopener noreferrer" className="p-2 bg-white/10 rounded-full hover:bg-white/20 transition-colors">
-                                <ArrowUpRight className="w-5 h-5" />
-                            </a>
-                        </div>
-                        <p className="text-gray-400 leading-relaxed text-sm md:text-base mb-6">
-                            {project.description}
-                        </p>
-                    </div>
-
-                    <div className="flex flex-wrap gap-2">
-                        {project.tags.map(tag => (
-                            <span key={tag} className="px-3 py-1 text-xs font-mono text-gray-300 bg-white/5 rounded-full border border-white/10">
-                                {tag}
-                            </span>
-                        ))}
-                    </div>
-                </div>
-            </div>
-        </motion.div>
     );
 };
 

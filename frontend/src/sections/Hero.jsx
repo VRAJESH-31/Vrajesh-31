@@ -1,9 +1,44 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-scroll';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Github, Linkedin, Twitter, Mail } from 'lucide-react';
+import { useState, useEffect } from 'react';
 import profilePic from '../assets/pp.jpg';
 
 const Hero = () => {
+    const roles = ["Full Stack Developer", "MERN Stack Expert", "Ai-Ml Enthusiastic"];
+    const [currentRoleIndex, setCurrentRoleIndex] = useState(0);
+    const [displayedText, setDisplayedText] = useState("");
+    const [isDeleting, setIsDeleting] = useState(false);
+
+    useEffect(() => {
+        const handleType = () => {
+            const currentRole = roles[currentRoleIndex];
+
+            if (isDeleting) {
+                setDisplayedText((prev) => currentRole.substring(0, prev.length - 1));
+            } else {
+                setDisplayedText((prev) => currentRole.substring(0, prev.length + 1));
+            }
+
+            if (!isDeleting && displayedText === currentRole) {
+                setTimeout(() => setIsDeleting(true), 2000); // Pause at end
+            } else if (isDeleting && displayedText === "") {
+                setIsDeleting(false);
+                setCurrentRoleIndex((prev) => (prev + 1) % roles.length);
+            }
+        };
+
+        const timer = setTimeout(handleType, isDeleting ? 50 : 150);
+        return () => clearTimeout(timer);
+    }, [displayedText, isDeleting, currentRoleIndex, roles]);
+
+    const socialLinks = [
+        { icon: <Github size={24} />, href: "#", label: "GitHub" },
+        { icon: <Linkedin size={24} />, href: "#", label: "LinkedIn" },
+        { icon: <Twitter size={24} />, href: "#", label: "Twitter" },
+        { icon: <Mail size={24} />, href: "mailto:your.email@example.com", label: "Email" },
+    ];
+
     return (
         <section id="home" className="w-full h-screen flex items-center justify-center relative overflow-hidden bg-background">
             {/* Split Layout Container */}
@@ -23,25 +58,46 @@ const Hero = () => {
                             </span>
                         </h1>
 
-                        <h2 className="text-xl md:text-2xl font-light text-gray-400 mb-8 flex items-center gap-3">
+                        <h2 className="text-xl md:text-2xl font-light text-gray-400 mb-8 flex items-center gap-3 h-8">
                             <span className="w-8 h-[1px] bg-purple-500"></span>
-                            Full Stack Developer
+                            <span className="font-mono text-purple-300">
+                                {displayedText}
+                                <span className="animate-pulse">|</span>
+                            </span>
                         </h2>
 
                         <p className="text-gray-400 text-lg md:text-xl max-w-md mb-10 leading-relaxed">
                             Crafting immersive digital experiences with modern technologies and a cinematic touch.
                         </p>
 
-                        <div className="flex gap-6">
-                            <Link
-                                to="contact"
-                                smooth={true}
-                                duration={800}
-                                className="group px-8 py-4 bg-white text-black font-bold rounded-full text-lg hover:bg-purple-50 transition-all flex items-center gap-2 cursor-pointer"
-                            >
-                                Get in Touch
-                                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                            </Link>
+                        <div className="space-y-8">
+                            <div className="flex gap-6">
+                                <Link
+                                    to="contact"
+                                    smooth={true}
+                                    duration={800}
+                                    className="group px-8 py-4 bg-white text-black font-bold rounded-full text-lg hover:bg-purple-50 transition-all flex items-center gap-2 cursor-pointer shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:shadow-[0_0_30px_rgba(255,255,255,0.5)]"
+                                >
+                                    Get in Touch
+                                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                                </Link>
+                            </div>
+
+                            {/* Social Links Row */}
+                            <div className="flex items-center gap-6">
+                                {socialLinks.map((link, index) => (
+                                    <a
+                                        key={index}
+                                        href={link.href}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-gray-400 hover:text-white transform hover:scale-125 transition-all duration-300 hover:text-purple-400"
+                                        aria-label={link.label}
+                                    >
+                                        {link.icon}
+                                    </a>
+                                ))}
+                            </div>
                         </div>
                     </motion.div>
                 </div>
