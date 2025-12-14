@@ -47,7 +47,7 @@ const About = () => {
                             <span className="text-accent text-cyan-300"> AI/ML technologies</span> to build intelligent, data-driven applications.
                         </p>
                         <p>
-                            Driven by strong problem-solving abilities, I enjoy tackling <span className="text-white font-semibold">real-world challenges</span>
+                            Driven by strong problem-solving abilities, I enjoy tackling <span className="text-white font-semibold">real-world challenges </span>
                             through code, from optimizing backend performance to crafting immersive frontend experiences.
                         </p>
                     </motion.div>
@@ -79,7 +79,7 @@ const About = () => {
                                     <div className="pl-4 space-y-1 text-gray-300">
                                         <p>name: <span className="text-green-400">'Vrajesh Pandya'</span>,</p>
                                         <p>role: <span className="text-green-400">'Full Stack Architect'</span>,</p>
-                                        <p>focus: <span className="text-green-400">'Web3 & AI'</span>,</p>
+                                        <p>focus: <span className="text-green-400">'Web-technologies & AI/ML'</span>,</p>
                                         <p>status: <span className="text-green-400">'Building the Future'</span>,</p>
                                         <p>coffeeLevel: <span className="text-orange-400 mt-1 inline-block animate-pulse">Infinity</span></p>
                                     </div>

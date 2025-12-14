@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, Mail, MapPin, Phone, CheckCircle, Loader2 } from 'lucide-react';
+import { Send, Mail, MapPin, Phone, CheckCircle, Loader2, MessageCircle, Copy, Check } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 
 const Contact = () => {
@@ -9,6 +9,14 @@ const Contact = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+
+        // Auto-send logic (WhatsApp only)
+        const messageText = `Hello Vrajesh,\n\nI am ${formState.name}.\n\n${formState.message}\n\nMy Email: ${formState.email}`;
+        const whatsappLink = `https://wa.me/919327220321?text=${encodeURIComponent(messageText)}`;
+
+        // Trigger WhatsApp
+        window.open(whatsappLink, '_blank');
+
         setStatus('sending');
 
         // Sucking animation duration
@@ -33,14 +41,19 @@ const Contact = () => {
                             Let's <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-cyan-400">Connect</span>
                         </h2>
                         <p className="text-gray-400 text-lg max-w-md leading-relaxed">
-                            Have a project in mind or just want to chat about AI and Web3?
+                            Have a project in mind or just want to chat about AI and Web?
                             I'm always open to new opportunities and collaborations.
                         </p>
                     </div>
 
                     <div className="space-y-8">
-                        <ContactItem icon={<Mail />} title="Email" value="hello@vrajesh.dev" />
-                        <ContactItem icon={<Phone />} title="Phone" value="+91 98765 43210" />
+                        <ContactItem
+                            icon={<Mail />}
+                            title="Email"
+                            value="npandyavrajesh31@gmail.com"
+                            link="mailto:npandyavrajesh31@gmail.com?subject=Let's Connect"
+                        />
+                        <ContactItem icon={<Phone />} title="Phone" value="+91 93272 20321" />
                         <ContactItem icon={<MapPin />} title="Location" value="Vadodara, India" />
                     </div>
                 </motion.div>
@@ -64,8 +77,8 @@ const Contact = () => {
                                 >
                                     <CheckCircle size={64} />
                                 </motion.div>
-                                <h3 className="text-2xl font-bold text-white mb-2">Transmission Received</h3>
-                                <p className="text-gray-400">I'll get back to you across the galaxy soon.</p>
+                                <h3 className="text-2xl font-bold text-white mb-2">Thank you for connecting with me</h3>
+                                <p className="text-gray-400">I'll get back to you soon.</p>
                                 <button
                                     onClick={() => {
                                         setFormState({ name: '', email: '', message: '' });
@@ -140,17 +153,64 @@ const Contact = () => {
     );
 };
 
-const ContactItem = ({ icon, title, value }) => (
-    <div className="flex items-center gap-6 group cursor-pointer">
-        <div className="p-4 bg-white/5 rounded-2xl group-hover:bg-purple-500/20 transition-colors text-purple-400 border border-white/5 group-hover:border-purple-500/30">
-            {icon}
+const ContactItem = ({ icon, title, value, link }) => {
+    const [copied, setCopied] = useState(false);
+
+    const handleCopy = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        navigator.clipboard.writeText(value);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+    };
+
+    const content = (
+        <div className="flex items-center gap-6 flex-1 relative">
+            <div className="p-4 bg-white/5 rounded-2xl group-hover:bg-purple-500/20 transition-colors text-purple-400 border border-white/5 group-hover:border-purple-500/30">
+                {icon}
+            </div>
+            <div>
+                <h4 className="text-gray-500 text-sm font-mono uppercase tracking-wider mb-1">{title}</h4>
+                <p className="text-xl font-semibold group-hover:text-purple-400 transition-colors">{value}</p>
+            </div>
+
+            {/* Tooltip for Linkable Items */}
+            {link && (
+                <div className="absolute -top-10 left-10 px-3 py-1 bg-purple-500 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-lg">
+                    Click to Connect
+                    <div className="absolute bottom-[-4px] left-1/2 -translate-x-1/2 w-2 h-2 bg-purple-500 rotate-45" />
+                </div>
+            )}
         </div>
-        <div>
-            <h4 className="text-gray-500 text-sm font-mono uppercase tracking-wider mb-1">{title}</h4>
-            <p className="text-xl font-semibold group-hover:text-purple-400 transition-colors">{value}</p>
+    );
+
+    return (
+        <div className="flex items-center justify-between group p-2 rounded-2xl transition-all hover:bg-white/5 hover:pr-4">
+            {link ? (
+                <a
+                    href={link}
+                    target={link.startsWith('http') ? "_blank" : undefined}
+                    rel={link.startsWith('http') ? "noopener noreferrer" : undefined}
+                    className="flex-1 cursor-pointer"
+                >
+                    {content}
+                </a>
+            ) : (
+                <div className="flex-1">
+                    {content}
+                </div>
+            )}
+
+            <button
+                onClick={handleCopy}
+                className="p-3 text-gray-500 hover:text-white hover:bg-white/10 rounded-xl transition-all opacity-0 group-hover:opacity-100 translate-x-4 group-hover:translate-x-0"
+                title="Copy to clipboard"
+            >
+                {copied ? <Check size={20} className="text-green-400" /> : <Copy size={20} />}
+            </button>
         </div>
-    </div>
-);
+    );
+};
 
 const FloatingInput = ({ label, name, type, value, onChange, isFocused, onFocus, onBlur, disabled, delay }) => {
     return (

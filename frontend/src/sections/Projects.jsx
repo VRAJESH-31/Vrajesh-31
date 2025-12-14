@@ -28,7 +28,7 @@ const projects = [
             "Engineered advanced filtering logic to automate partner matching and quote generation, enabling the system to instantly calculate costs and margins based on dynamic user preferences like budget and star rating."
         ],
         tags: ["React", "Node.js", "Express", "MongoDB", "GSAP", "Tailwind CSS", "JWT"],
-        links: { demo: "#", code: "#" },
+        links: { demo: "https://voyage-gen-b2-b-travel-agency-quoat.vercel.app/", code: "https://github.com/VRAJESH-31/VoyageGEN--B2B-Travel-Agency-Quoatation-System" },
         image: "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?q=80&w=2021&auto=format&fit=crop"
     },
     {
@@ -42,7 +42,7 @@ const projects = [
             "Developed a responsive React UI with reusable components and smooth state management, providing a seamless chat experience across desktop and mobile devices."
         ],
         tags: ["MERN", "Socket.IO", "JWT", "Zustand", "MongoDB"],
-        links: { demo: "#", code: "#" },
+        links: { demo: "https://chat-app-pearl-phi.vercel.app/", code: "https://github.com/VRAJESH-31/Chat-app" },
         image: "https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=1974&auto=format&fit=crop"
     },
     {
@@ -56,7 +56,7 @@ const projects = [
             "Enhanced reliability of attendance tracking by significantly reducing false positives, ensuring accurate and consistent student records."
         ],
         tags: ["Python", "Flask", "TensorFlow", "ResNet50", "MongoDB", "React"],
-        links: { demo: "#", code: "#" },
+        links: { demo: "#", code: "https://github.com/VRAJESH-31/Smart-attendance" },
         image: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=2070&auto=format&fit=crop"
     },
     {
@@ -70,7 +70,7 @@ const projects = [
             "Implemented MongoDB persistence, allowing notes to sync across devices in real-time."
         ],
         tags: ["React", "Node.js", "Express", "MongoDB"],
-        links: { demo: "#", code: "#" },
+        links: { demo: "https://notes-app-nine-navy.vercel.app/", code: "https://github.com/VRAJESH-31/notes-app" },
         image: "https://images.unsplash.com/photo-1517842645767-c639042777db?q=80&w=2070&auto=format&fit=crop"
     },
     {
@@ -84,7 +84,7 @@ const projects = [
             "Added robust error handling and rate limiting to ensure reliability and stability during high-volume API interactions."
         ],
         tags: ["Node.js", "Gemini API", "React"],
-        links: { demo: "#", code: "#" },
+        links: { demo: "https://ai-powered-code-reviewer-uxfo.vercel.app/", code: "https://github.com/VRAJESH-31/Ai-powered-Code-Reviewer" },
         image: "https://images.unsplash.com/photo-1555099962-4199c345e5dd?q=80&w=2070&auto=format&fit=crop"
     }
 ];

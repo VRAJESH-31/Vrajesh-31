@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-scroll';
-import { ArrowRight, Github, Linkedin, Twitter, Mail } from 'lucide-react';
+import { ArrowRight, Github, Linkedin, Instagram, Mail, Download } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import profilePic from '../assets/pp.jpg';
 
@@ -33,10 +33,10 @@ const Hero = () => {
     }, [displayedText, isDeleting, currentRoleIndex, roles]);
 
     const socialLinks = [
-        { icon: <Github size={24} />, href: "#", label: "GitHub" },
-        { icon: <Linkedin size={24} />, href: "#", label: "LinkedIn" },
-        { icon: <Twitter size={24} />, href: "#", label: "Twitter" },
-        { icon: <Mail size={24} />, href: "mailto:your.email@example.com", label: "Email" },
+        { icon: <Github size={24} />, href: "https://github.com/VRAJESH-31", label: "GitHub", tooltip: "Have a look on my GitHub" },
+        { icon: <Linkedin size={24} />, href: "https://www.linkedin.com/in/vrajesh-n-pandya-a8ba25266/", label: "LinkedIn", tooltip: "Connect on LinkedIn" },
+        { icon: <Instagram size={24} />, href: "https://www.instagram.com/pandyavraj_31/", label: "Instagram", tooltip: "Follow me on Instagram" },
+        { icon: <Mail size={24} />, href: "mailto:npandyavrajesh@gmail.com", label: "Email", tooltip: "Send me an Email" },
     ];
 
     return (
@@ -81,21 +81,38 @@ const Hero = () => {
                                     Get in Touch
                                     <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                                 </Link>
+
+                                <a
+                                    href="/RESUME.pdf"
+                                    download="RESUME.pdf"
+                                    className="group px-8 py-4 bg-transparent border border-white/20 text-white font-bold rounded-full text-lg hover:bg-white/10 transition-all flex items-center gap-2 cursor-pointer backdrop-blur-sm"
+                                >
+                                    Download Resume
+                                    <Download className="w-5 h-5 group-hover:translate-y-1 transition-transform" />
+                                </a>
                             </div>
 
                             {/* Social Links Row */}
                             <div className="flex items-center gap-6">
                                 {socialLinks.map((link, index) => (
-                                    <a
-                                        key={index}
-                                        href={link.href}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="text-gray-400 hover:text-white transform hover:scale-125 transition-all duration-300 hover:text-purple-400"
-                                        aria-label={link.label}
-                                    >
-                                        {link.icon}
-                                    </a>
+                                    <div key={index} className="relative group">
+                                        <a
+                                            href={link.href}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="block text-gray-400 hover:text-white transform hover:scale-125 transition-all duration-300 hover:text-purple-400"
+                                            aria-label={link.label}
+                                        >
+                                            {link.icon}
+                                        </a>
+
+                                        {/* Tooltip */}
+                                        <div className="absolute top-full mt-4 left-1/2 -translate-x-1/2 px-3 py-1 bg-white/10 backdrop-blur-md border border-white/10 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-xl z-20">
+                                            {link.tooltip}
+                                            {/* Arrow pointing up */}
+                                            <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-white/10 border-l border-t border-white/10 rotate-45" />
+                                        </div>
+                                    </div>
                                 ))}
                             </div>
                         </div>

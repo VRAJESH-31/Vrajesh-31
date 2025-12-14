@@ -169,16 +169,31 @@ const ProjectCard = ({ project, isActive }) => {
                                     <Github size={22} className="text-gray-300 group-hover/icon:text-white transition-colors" />
                                 </a>
 
-                                <a
-                                    href={project.links.demo}
-                                    target="_blank"
-                                    rel="noreferrer"
-                                    className="p-3 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-xl border border-white/10 transition-all hover:scale-110 active:scale-95 flex items-center justify-center group/icon"
-                                    title="Live Demo"
-                                    onClick={(e) => e.stopPropagation()}
-                                >
-                                    <ArrowUpRight size={22} className="text-gray-300 group-hover/icon:text-white transition-colors" />
-                                </a>
+                                {project.links.demo && project.links.demo !== '#' ? (
+                                    <a
+                                        href={project.links.demo}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                        className="p-3 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-xl border border-white/10 transition-all hover:scale-110 active:scale-95 flex items-center justify-center group/icon"
+                                        title="Live Demo"
+                                        onClick={(e) => e.stopPropagation()}
+                                    >
+                                        <ArrowUpRight size={22} className="text-gray-300 group-hover/icon:text-white transition-colors" />
+                                    </a>
+                                ) : (
+                                    <div className="relative group/disabled-icon">
+                                        <button
+                                            className="p-3 bg-white/5 rounded-xl border border-white/5 cursor-not-allowed flex items-center justify-center"
+                                            onClick={(e) => e.stopPropagation()}
+                                        >
+                                            <ArrowUpRight size={22} className="text-gray-600" />
+                                        </button>
+                                        <div className="absolute bottom-full mb-3 left-1/2 -translate-x-1/2 px-3 py-1.5 bg-black/90 backdrop-blur-md border border-white/10 text-white text-xs rounded-lg opacity-0 group-hover/disabled-icon:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50 shadow-xl">
+                                            Still in process, will deploy soon
+                                            <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-black/90 border-r border-b border-white/10 rotate-45 transform" />
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -249,9 +264,53 @@ const ProjectCard = ({ project, isActive }) => {
     );
 };
 
+// Sci-Fi Mission HUD Component
+const MissionHUD = ({ count, activeIndex }) => {
+    return (
+        <div className="flex flex-col items-center justify-center mb-8 relative z-20 font-mono select-none">
+            <div className="flex items-end gap-3 text-cyan-400 relative">
+                <span className="text-sm font-bold tracking-[0.2em] mb-1.5 opacity-70">MISSION</span>
+                <div className="flex items-baseline">
+                    <span className="text-5xl font-bold leading-none tracking-tighter shadow-cyan-500/50 drop-shadow-[0_0_10px_rgba(34,211,238,0.5)]">
+                        {String(activeIndex + 1).padStart(2, '0')}
+                    </span>
+                    <span className="text-xl opacity-40 ml-2 font-light">/ {String(count).padStart(2, '0')}</span>
+                </div>
+
+                {/* Decorative Status Dot */}
+                <div className="absolute -right-4 top-2 w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse shadow-[0_0_5px_#22c55e]" />
+            </div>
+
+            {/* Progress Bar Container */}
+            <div className="w-64 h-1 bg-gray-800/50 mt-4 relative overflow-hidden rounded-full backdrop-blur-sm border border-white/5">
+                {/* Active Progress */}
+                <motion.div
+                    className="absolute top-0 left-0 h-full bg-gradient-to-r from-purple-500 to-cyan-400 shadow-[0_0_15px_rgba(34,211,238,0.6)]"
+                    initial={{ width: 0 }}
+                    animate={{ width: `${((activeIndex + 1) / count) * 100}%` }}
+                    transition={{ type: "spring", stiffness: 100, damping: 20 }}
+                />
+            </div>
+
+            {/* Decorative Cyber Lines */}
+            <div className="absolute -left-16 top-1/2 -translate-y-1/2 w-10 h-[1px] bg-gradient-to-r from-transparent to-cyan-500/20" />
+            <div className="absolute -right-16 top-1/2 -translate-y-1/2 w-10 h-[1px] bg-gradient-to-l from-transparent to-cyan-500/20" />
+
+            {/* Bottom Tag */}
+            <div className="mt-2 text-[10px] tracking-[0.3em] text-cyan-500/40 uppercase">
+                System Online
+            </div>
+        </div>
+    );
+};
+
 const ProjectDeck = ({ projects }) => {
+    const [activeIndex, setActiveIndex] = useState(0);
+
     return (
         <div className="w-full py-10 relative">
+            <MissionHUD count={projects.length} activeIndex={activeIndex} />
+
             <Swiper
                 effect={'coverflow'}
                 grabCursor={false} // Disable default drag if interfering with buttons, but usually fine
@@ -270,7 +329,8 @@ const ProjectDeck = ({ projects }) => {
                 pagination={{ clickable: true }}
                 keyboard={{ enabled: true }}
                 modules={[EffectCoverflow, Pagination, Navigation, Keyboard]}
-                className="w-full pt-12 pb-20 px-4 !overflow-visible"
+                className="w-full pt-4 pb-20 px-4 !overflow-visible"
+                onSlideChange={(swiper) => setActiveIndex(swiper.realIndex)}
             >
                 {projects.map((project, index) => (
                     <SwiperSlide
