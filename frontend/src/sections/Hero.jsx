@@ -83,8 +83,8 @@ const Hero = () => {
                                 </Link>
 
                                 <a
-                                    href="/RESUME.pdf"
-                                    download="RESUME.pdf"
+                                    href="/Vraj.pdf"
+                                    download="Vraj.pdf"
                                     className="group px-8 py-4 bg-transparent border border-white/20 text-white font-bold rounded-full text-lg hover:bg-white/10 transition-all flex items-center gap-2 cursor-pointer backdrop-blur-sm"
                                 >
                                     Download Resume
