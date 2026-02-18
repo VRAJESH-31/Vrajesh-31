@@ -1,14 +1,15 @@
 import { motion, useMotionValue, useTransform, useSpring } from 'framer-motion';
 import { useRef } from 'react';
 import { Link } from 'react-scroll';
-import { Home, User, Code, Briefcase, Mail } from 'lucide-react';
+import { Home, User, Code, Briefcase, FolderOpen, Mail } from 'lucide-react';
 
 const Navbar = () => {
     const navItems = [
         { name: 'Home', icon: <Home size={22} />, to: 'home' },
         { name: 'About', icon: <User size={22} />, to: 'about' },
+        { name: 'Experience', icon: <Briefcase size={22} />, to: 'experience' },
         { name: 'Skills', icon: <Code size={22} />, to: 'skills' },
-        { name: 'Projects', icon: <Briefcase size={22} />, to: 'projects' },
+        { name: 'Projects', icon: <FolderOpen size={22} />, to: 'projects' },
         { name: 'Contact', icon: <Mail size={22} />, to: 'contact' },
     ];
 

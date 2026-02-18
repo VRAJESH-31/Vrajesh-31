@@ -130,31 +130,61 @@ const getConnections = (groups) => {
             });
         }
     });
-
     return connections;
 };
 
 const Node = ({ position, name, color, size = 1, desc, onClick, onHover, isSelected, isHovered, isRelated, isFocusMode }) => {
     const ref = useRef();
+    const innerRef = useRef();
+    const glowRef = useRef();
+    const particlesRef = useRef();
 
     useFrame((state) => {
         if (ref.current) {
-            // Idle animation
-            ref.current.rotation.y += 0.005;
-            ref.current.rotation.z = Math.sin(state.clock.elapsedTime * 0.5) * 0.1;
+            // Main orb rotation
+            ref.current.rotation.y += 0.003;
+            ref.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.2) * 0.1;
+            
+            // Inner core rotation (opposite direction)
+            if (innerRef.current) {
+                innerRef.current.rotation.y -= 0.01;
+                innerRef.current.rotation.z = Math.sin(state.clock.elapsedTime * 0.8) * 0.2;
+            }
+            
+            // Glow pulsing
+            if (glowRef.current) {
+                const pulseScale = 1 + Math.sin(state.clock.elapsedTime * 2) * 0.1;
+                glowRef.current.scale.setScalar(pulseScale);
+            }
+            
+            // Particle orbit
+            if (particlesRef.current) {
+                particlesRef.current.rotation.y = state.clock.elapsedTime * 0.5;
+            }
         }
     });
 
-    const scale = isSelected ? 1.5 : (isHovered ? 1.2 : 1);
+    const scale = isSelected ? 1.8 : (isHovered ? 1.4 : 1);
 
     // Calculate opacity based on focus mode
-    const baseOpacity = isFocusMode ? 0.05 : 0.6; // Dim everything else heavily if focus mode is on
+    const baseOpacity = isFocusMode ? 0.05 : 0.6;
     const activeOpacity = 1;
     const currentOpacity = (isSelected || isHovered || (isFocusMode && isRelated)) ? activeOpacity : baseOpacity;
 
     return (
         <group position={position}>
-            <Float speed={2} rotationIntensity={0.2} floatIntensity={0.5}>
+            <Float speed={2} rotationIntensity={0.3} floatIntensity={0.6}>
+                {/* Outer Glow Orb */}
+                <mesh ref={glowRef} scale={[scale * 2.5, scale * 2.5, scale * 2.5]}>
+                    <sphereGeometry args={[size * 0.4, 32, 32]} />
+                    <meshBasicMaterial
+                        color={color}
+                        transparent
+                        opacity={isSelected || isHovered ? 0.15 : 0.05}
+                    />
+                </mesh>
+
+                {/* Main Crystal Orb */}
                 <mesh
                     ref={ref}
                     onClick={(e) => {
@@ -173,72 +203,101 @@ const Node = ({ position, name, color, size = 1, desc, onClick, onHover, isSelec
                     }}
                     scale={[scale, scale, scale]}
                 >
-                    <icosahedronGeometry args={[size * 0.3, 1]} />
-                    <meshStandardMaterial
+                    {/* Crystal geometry - more complex than icosahedron */}
+                    <dodecahedronGeometry args={[size * 0.35, 0]} />
+                    <meshPhysicalMaterial
                         color={color}
                         emissive={color}
-                        emissiveIntensity={isSelected || isHovered ? 3 : (isRelated ? 1.5 : 0.5)}
-                        roughness={0.2}
-                        metalness={0.8}
-                        wireframe={!isSelected && !isHovered}
+                        emissiveIntensity={isSelected || isHovered ? 2.5 : (isRelated ? 1.2 : 0.3)}
+                        roughness={0.1}
+                        metalness={0.9}
+                        transmission={0.6}
+                        thickness={0.5}
+                        clearcoat={1}
+                        clearcoatRoughness={0}
                         transparent
                         opacity={currentOpacity}
+                        envMapIntensity={2}
                     />
 
-                    {/* Label Container */}
-                    <Html distanceFactor={12} style={{ pointerEvents: 'none' }} position={[0, -0.8, 0]}>
-                        <div className={`
-                            flex flex-col items-center
-                            transition-all duration-500
-                            ${(isSelected || isHovered || (isFocusMode && isRelated)) ? 'opacity-100 scale-110' : (isFocusMode ? 'opacity-10 blur-sm scale-75' : 'opacity-40 scale-90')}
-                        `}>
-                            <div className={`
-                                px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap backdrop-blur-md border 
-                                ${isSelected
-                                    ? 'bg-white/90 text-black border-white shadow-[0_0_15px_rgba(255,255,255,0.5)]'
-                                    : 'bg-black/60 text-white/90 border-white/20'
-                                }
-                            `}>
-                                {name}
-                            </div>
-                            {(isSelected || isHovered) && desc && (
-                                <div className="mt-1 px-2 py-0.5 rounded-md bg-black/80 text-[10px] text-gray-300 whitespace-nowrap border border-white/10">
-                                    {desc}
-                                </div>
-                            )}
+                    {/* Inner Core */}
+                    <mesh ref={innerRef} scale={[0.5, 0.5, 0.5]}>
+                        <octahedronGeometry args={[size * 0.2, 0]} />
+                        <meshStandardMaterial
+                            color={isSelected || isHovered ? '#ffffff' : color}
+                            emissive={color}
+                            emissiveIntensity={3}
+                            roughness={0}
+                            metalness={1}
+                        />
+                    </mesh>
+                </mesh>
+
+                {/* Orbiting Particles */}
+                <group ref={particlesRef}>
+                    {[0, 60, 120, 180, 240, 300].map((angle, i) => (
+                        <mesh
+                            key={i}
+                            position={[
+                                Math.cos((angle * Math.PI) / 180) * size * 0.8,
+                                Math.sin((angle * Math.PI) / 180) * size * 0.8,
+                                0
+                            ]}
+                            scale={[0.05, 0.05, 0.05]}
+                        >
+                            <sphereGeometry args={[1, 8, 8]} />
+                            <meshBasicMaterial
+                                color={isSelected || isHovered ? '#ffffff' : color}
+                                transparent
+                                opacity={isSelected || isHovered ? 0.9 : 0.4}
+                            />
+                        </mesh>
+                    ))}
+                </group>
+
+                
+                {/* Label Container */}
+                <Html distanceFactor={12} style={{ pointerEvents: 'none' }} position={[0, -1.2, 0]}>
+                    <div className={`flex flex-col items-center transition-all duration-500 ${(isSelected || isHovered || (isFocusMode && isRelated)) ? 'opacity-100 scale-110' : (isFocusMode ? 'opacity-10 blur-sm scale-75' : 'opacity-40 scale-90')}`}>
+                        <div className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap backdrop-blur-md border shadow-lg ${isSelected ? 'bg-gradient-to-r from-white/90 to-white/80 text-black border-white shadow-[0_0_20px_rgba(255,255,255,0.6)]' : 'bg-gradient-to-r from-white/20 to-white/10 text-white/90 border-white/30 shadow-[0_0_10px_rgba(255,255,255,0.2)]'}`}>
+                            {name}
                         </div>
-                    </Html>
-                </mesh>
-
-                {/* Glow Halo */}
-                <mesh scale={[scale * 1.5, scale * 1.5, scale * 1.5]}>
-                    <sphereGeometry args={[size * 0.3, 16, 16]} />
-                    <meshBasicMaterial
-                        color={color}
-                        transparent
-                        opacity={isSelected ? 0.2 : (isHovered ? 0.15 : (isFocusMode && !isRelated ? 0 : 0.05))}
-                        blending={THREE.AdditiveBlending}
-                        depthWrite={false}
-                    />
-                </mesh>
+                        {(isSelected || isHovered) && desc && (
+                            <div className="mt-2 px-3 py-1 rounded-lg bg-black/80 backdrop-blur-md border border-white/20 text-xs text-white/80 max-w-xs text-center">
+                                {desc}
+                            </div>
+                        )}
+                    </div>
+                </Html>
             </Float>
         </group>
     );
 };
 
 const Connection = ({ start, end, color, active, type, isFocusMode }) => {
-    // Only separate rendering logic if needed, but keeping it simple for now
+    const ref = useRef();
     const isCross = type === 'cross';
-    const opacity = active ? 0.6 : (isFocusMode ? 0 : 0.1); // Hide lines if not relevant in focus mode
+    const opacity = active ? 0.8 : (isFocusMode ? 0 : 0.15);
+
+    useFrame((state) => {
+        if (ref.current && active) {
+            // Animated flow effect for active connections
+            ref.current.material.dashOffset = -state.clock.elapsedTime * 0.5;
+        }
+    });
 
     return (
         <Line
+            ref={ref}
             points={[start, end]}
             color={active ? color : (isCross ? "#666" : "#444")}
-            lineWidth={active ? (isCross ? 1.5 : 2) : (isCross ? 0.5 : 1)}
+            lineWidth={active ? (isCross ? 2 : 3) : (isCross ? 0.8 : 1.5)}
             transparent
             opacity={opacity}
             dashed={isCross}
+            dashScale={10}
+            dashSize={0.5}
+            gapSize={0.5}
         />
     );
 };
@@ -282,12 +341,16 @@ const Scene = ({ onNodeSelect, selectedNode, isFocusMode }) => {
 
             <CameraController selectedNode={selectedNode} />
 
-            <ambientLight intensity={0.2} />
-            <pointLight position={[10, 10, 10]} intensity={1} color="#ffffff" />
-            <pointLight position={[-10, -10, -10]} intensity={0.5} color="#4c1d95" /> {/* Purple glow */}
+            <ambientLight intensity={0.3} />
+            <pointLight position={[15, 15, 15]} intensity={1.2} color="#ffffff" />
+            <pointLight position={[-15, -15, -15]} intensity={0.8} color="#7c3aed" /> {/* Purple glow */}
+            <pointLight position={[0, 10, -10]} intensity={0.6} color="#06b6d4" /> {/* Cyan glow */}
+            <pointLight position={[0, -10, 10]} intensity={0.6} color="#f59e0b" /> {/* Amber glow */}
 
-            <Stars radius={100} depth={50} count={3000} factor={4} saturation={0} fade speed={0.5} />
-            <Sparkles count={100} scale={20} size={2} speed={0.4} opacity={0.5} color="#ffffff" />
+            <Stars radius={150} depth={60} count={5000} factor={4} saturation={0} fade speed={0.3} />
+            <Sparkles count={200} scale={30} size={3} speed={0.5} opacity={0.6} color="#ffffff" />
+            <Sparkles count={100} scale={25} size={2} speed={0.3} opacity={0.4} color="#7c3aed" />
+            <Sparkles count={80} scale={20} size={2} speed={0.4} opacity={0.3} color="#06b6d4" />
 
             {skillGroups.map((group, i) => (
                 <group key={i}>

@@ -3,6 +3,7 @@ import Lenis from 'lenis';
 import Navbar from './components/Navbar';
 import Hero from './sections/Hero';
 import About from './sections/About';
+import Experience from './sections/Experience';
 import Skills from './sections/Skills';
 import Projects from './sections/Projects';
 import Contact from './sections/Contact';
@@ -46,6 +47,7 @@ function App() {
       <main className="relative z-10 flex flex-col items-center w-full">
         <Hero />
         <About />
+        <Experience />
         <Skills />
         <Projects />
         <Contact />

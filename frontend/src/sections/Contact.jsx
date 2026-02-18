@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send, Mail, MapPin, Phone, CheckCircle, Loader2, MessageCircle, Copy, Check } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
+import SectionBackground from '../components/SectionBackground';
 
 const Contact = () => {
     const [formState, setFormState] = useState({ name: '', email: '', message: '' });
@@ -26,8 +27,9 @@ const Contact = () => {
     };
 
     return (
-        <section id="contact" className="w-full min-h-screen flex items-center justify-center px-6 py-20 relative overflow-hidden">
-            <div className="max-w-7xl w-full mx-auto grid grid-cols-1 md:grid-cols-2 gap-16 lg:gap-24 relative z-10">
+        <SectionBackground className="w-full min-h-screen flex items-center justify-center px-6 pt-12 md:pt-16 pb-20">
+            <section id="contact" className="w-full h-full">
+                <div className="max-w-7xl w-full mx-auto grid grid-cols-1 md:grid-cols-2 gap-16 lg:gap-24 relative z-10">
 
                 {/* Contact Info */}
                 <motion.div
@@ -149,7 +151,8 @@ const Contact = () => {
                 </div>
 
             </div>
-        </section>
+            </section>
+        </SectionBackground>
     );
 };
 
