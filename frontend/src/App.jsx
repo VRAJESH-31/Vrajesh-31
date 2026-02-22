@@ -1,18 +1,22 @@
 import { useEffect } from 'react';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import Lenis from 'lenis';
 import Navbar from './components/Navbar';
-import Hero from './sections/Hero';
-import About from './sections/About';
-import Experience from './sections/Experience';
-import Skills from './sections/Skills';
-import Projects from './sections/Projects';
-import Contact from './sections/Contact';
 import Footer from './components/Footer';
 import Background3D from './components/Background3D';
 import CustomCursor from './components/CustomCursor';
+import Home from './pages/Home';
+import ProjectDetails from './pages/ProjectDetails';
 import './index.css';
 
 function App() {
+  const { pathname } = useLocation();
+
+  // Scroll to top on route change
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
   useEffect(() => {
     const lenis = new Lenis({
       duration: 1.2,
@@ -45,12 +49,10 @@ function App() {
       <Navbar />
 
       <main className="relative z-10 flex flex-col items-center w-full">
-        <Hero />
-        <About />
-        <Experience />
-        <Skills />
-        <Projects />
-        <Contact />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/project/:id" element={<ProjectDetails />} />
+        </Routes>
         <Footer />
       </main>
     </div>

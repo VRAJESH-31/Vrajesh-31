@@ -48,8 +48,6 @@ function DockIcon({ mouseX, item }) {
             to={item.to}
             smooth={true}
             duration={700}
-            spy={true}
-            hashSpy={true}
             activeClass="" // Removed activeClass from Link to handle styling inside motion.div manually if needed, or rely on visual size
             className="group relative flex flex-col items-center"
         >

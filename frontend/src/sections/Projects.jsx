@@ -1,6 +1,7 @@
-import { useLayoutEffect, useRef, useState } from "react";
+import { useLayoutEffect, useRef } from "react";
+import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowUpRight, Github, Play, ArrowLeft } from "lucide-react";
+import { ArrowUpRight, Github, Play, Cpu, GitBranch } from "lucide-react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import SectionBackground from '../components/SectionBackground';
@@ -9,9 +10,47 @@ gsap.registerPlugin(ScrollTrigger);
 
 const projects = [
     {
+        id: "voyagegen",
+        title: "VoyageGen",
+        category: "B2B Travel AI Operating System",
+        summary: "An enterprise-grade, AI-powered travel quotation system that leverages a multi-agent architecture to automate destination research and itinerary planning, reducing manual work from hours to minutes.",
+        description: [
+            "Engineered a sophisticated multi-agent AI pipeline utilizing Google Gemini 2.5 Flash and SerpAPI to automate destination research, itinerary design, and pricing, reducing manual quote generation time by 95%.",
+            "Architected an asynchronous execution model with a 5-agent sequential workflow (Supervisor, Research, Planner, Pricer, and Quality) to ensure granular error recovery and 100% quality validation.",
+            "Designed an interactive real-time experience featuring a 2-second intelligent polling system that tracks agent progress through a high-performance React dashboard styled with Tailwind CSS.",
+            "Implemented production-ready security protocols including tiered JWT authentication, bcrypt credential hashing, and strict rate-limiting for high-load AI operations and agent-partner data protection.",
+            "Developed immersive frontend interactions using Framer Motion for seamless state transitions and visualized complex quotation metrics through polished, client-ready interfaces."
+        ],
+        tags: ["React", "Node.js", "Express", "MongoDB", "Google Gemini AI", "Multi-Agent AI", "SerpAPI"],
+        links: {
+            demo: "https://voyage-gen-b2-b-travel-agency-quoat.vercel.app/",
+            code: "https://github.com/VRAJESH-31/VoyageGEN--B2B-Travel-Agency-Quoatation-System"
+        },
+        image: "https://images.unsplash.com/photo-1488646953014-85cb44e25828?q=80&w=2070&auto=format&fit=crop"
+    },
+    {
+        id: "devlog-extension",
+        title: "Auto-DevLog",
+        category: "Developer Productivity",
+        summary: "An AI-powered VS Code extension that automates development journaling by tracking real-time keystrokes and generating professional session summaries.",
+        description: [
+            "Architected a modular, service-oriented VS Code extension using Node.js to silently monitor file changes with a custom-built event-driven pipeline and debounced capture engine.",
+            "Engineered a zero-data-loss crash recovery system that performs synchronous session backups to local storage on every capture, ensuring seamless restoration across IDE restarts.",
+            "Integrated Google Gemini AI with sophisticated system prompt engineering to analyze file relationships and generate structured Markdown logs following professional technical writing standards.",
+            "Designed an interactive real-time dashboard using a VS Code Webview panel and a dynamic status bar manager to visualize session metrics and file modification statistics."
+        ],
+        tags: ["Node.js", "VS Code API", "Gemini AI", "Markdown", "System Design"],
+        links: {
+            demo: "#",
+            code: "https://github.com/VRAJESH-31/dev-log-vs-code_extention"
+        },
+        image: "https://images.unsplash.com/photo-1542831371-29b0f74f9713?q=80&w=2070&auto=format&fit=crop"
+    },
+    {
+        id: "codefolio-insights",
         title: "CodeFolio Insights",
         category: "Analytics Platform",
-        summary: "Holistic developer analytics platform aggregating data from GitHub and LeetCode.",
+        summary: "A comprehensive developer analytics platform that aggregates GitHub and LeetCode metrics to evaluate candidate employability with custom algorithms.",
         description: [
             "Engineered CodeFolio Insights, a holistic developer analytics platform that aggregates and evaluates data from GitHub and LeetCode to assess candidate employability, providing users with quantifiable performance scores and tailored improvement roadmaps.",
             "Architected a scalable Node.js and Express backend to process real-time API data, implementing custom weighted algorithms that calculate normalized competency scores based on commit history, problem-solving streaks, and contest ratings.",
@@ -23,23 +62,28 @@ const projects = [
         image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=2015&auto=format&fit=crop"
     },
     {
-        title: "VoyageGen",
-        category: "B2B Travel System",
-        summary: "Advanced B2B Travel Quotation System with immersive 3D visuals.",
+        id: "ai-post-generator",
+        title: "AI Social Media Content Generator",
+        category: "AI Content Automation",
+        summary: "A specialized platform designed to streamline social media workflows by generating high-quality image captions and AI-powered video content from user uploads.",
         description: [
-            "Developed a high-performance React frontend styled with Tailwind CSS, integrating Three.js and Vanta.js for immersive 3D visuals and Lenis for premium smooth scrolling to enhance user engagement.",
-            "Architected a scalable Node.js and Express RESTful API to orchestrate complex data flow between the client and database, ensuring high availability for real-time travel quotation requests.",
-            "Implemented robust security using JWT authentication and bcrypt hashing to establish a strict Role-Based Access Control (RBAC) system, protecting sensitive data across Agent, Partner, and User dashboards.",
-            "Engineered advanced filtering logic to automate partner matching and quote generation, enabling the system to instantly calculate costs and margins based on dynamic user preferences like budget and star rating."
+            "Developed a full-stack content generation engine utilizing Google Gemini AI to analyze uploaded images and produce contextually relevant, engaging social media captions.",
+            "Architected a robust Node.js and Express backend featuring a dedicated video processing pipeline to manage complex video generation jobs and state tracking.",
+            "Implemented a secure media handling system using Multer for local storage management and Mongoose schemas to maintain persistent records of user-generated content and job history.",
+            "Designed a modular React frontend with a tabbed interface for seamless navigation between captioning, video generation, and historical content archives.",
+            "Integrated a comprehensive JWT-based authentication system to ensure private access to personal content galleries and generation history for individual users."
         ],
-        tags: ["React", "Node.js", "Express", "MongoDB", "GSAP", "Tailwind CSS", "JWT"],
-        links: { demo: "https://voyage-gen-b2-b-travel-agency-quoat.vercel.app/", code: "https://github.com/VRAJESH-31/VoyageGEN--B2B-Travel-Agency-Quoatation-System" },
-        image: "https://images.unsplash.com/photo-1488646953014-85cb44e25828?q=80&w=2070&auto=format&fit=crop"
+        tags: ["React", "Node.js", "Express", "MongoDB", "Gemini AI", "JWT", "Tailwind CSS"],
+        links: {
+            demo: "#",
+            code: "https://github.com/VRAJESH-31/ai-post-generater"
+        },
+        image: "https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?q=80&w=1974&auto=format&fit=crop"
     },
     {
         title: "Real-Time Chat",
         category: "Communication",
-        summary: "Secure, full-stack chat platform with Socket.IO and JWT.",
+        summary: "A secure, full-stack real-time communication platform built with Socket.IO, featuring instant messaging and online presence tracking.",
         description: [
             "Built a secure full-stack chat application with user authentication and session handling powered by JWT, ensuring safe login, token validation, and protected API routes.",
             "Integrated Socket.IO for real-time, bidirectional communication, enabling instant messaging, typing indicators, and online/offline user presence tracking.",
@@ -51,9 +95,23 @@ const projects = [
         image: "https://images.unsplash.com/photo-1611224923853-80b023f02d71?q=80&w=2070&auto=format&fit=crop"
     },
     {
+        title: "AI Code Reviewer",
+        category: "Developer Tool",
+        summary: "An innovative developer tool powered by Google's Gemini AI, delivering automated, intelligent code quality feedback and structured review suggestions.",
+        description: [
+            "Developed an innovative tool using the Gemini API to deliver smart, automated code quality feedback, helping developers catch bugs early.",
+            "Designed a Node.js backend for secure handling of API requests and code analysis, optimizing for low latency responses.",
+            "Built a React-based UI for intuitive code input and structured AI suggestions, featuring syntax highlighting and real-time feedback.",
+            "Added robust error handling and rate limiting to ensure reliability and stability during high-volume API interactions."
+        ],
+        tags: ["Node.js", "Gemini API", "React"],
+        links: { demo: "https://ai-powered-code-reviewer-uxfo.vercel.app/", code: "https://github.com/VRAJESH-31/Ai-powered-Code-Reviewer" },
+        image: "https://images.unsplash.com/photo-1555099962-4199c345e5dd?q=80&w=2070&auto=format&fit=crop"
+    },
+    {
         title: "Smart Attendance",
         category: "Computer Vision",
-        summary: "Automated attendance system achieving 98%+ accuracy using ResNet50.",
+        summary: "An automated student attendance management system powered by a custom deep learning ResNet50 model achieving 98%+ facial recognition accuracy.",
         description: [
             "Designed and deployed a full-stack web application for automated student attendance management, reducing manual errors by 5% and saving ~10 administrative hours per week.",
             "Implemented a ResNet50 deep learning model with TensorFlow, achieving 98%+ accuracy in face recognition across varied lighting and angles.",
@@ -67,7 +125,7 @@ const projects = [
     {
         title: "Notes Application",
         category: "Productivity",
-        summary: "Full-stack notes app with complete CRUD functionality.",
+        summary: "A responsive full-stack note-taking application demonstrating complete CRUD operations, secure routing, and real-time MongoDB data persistence.",
         description: [
             "Created a full-stack notes app with complete CRUD functionality, enabling users to create, read, update, and delete notes seamlessly.",
             "Built a secure REST API with Express.js and protected routes for personalized data access, ensuring user privacy and data integrity.",
@@ -78,24 +136,11 @@ const projects = [
         links: { demo: "https://notes-app-nine-navy.vercel.app/", code: "https://github.com/VRAJESH-31/notes-app" },
         image: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?q=80&w=2070&auto=format&fit=crop"
     },
-    {
-        title: "AI Code Reviewer",
-        category: "Developer Tool",
-        summary: "Smart, automated code quality feedback using Gemini AI.",
-        description: [
-            "Developed an innovative tool using the Gemini API to deliver smart, automated code quality feedback, helping developers catch bugs early.",
-            "Designed a Node.js backend for secure handling of API requests and code analysis, optimizing for low latency responses.",
-            "Built a React-based UI for intuitive code input and structured AI suggestions, featuring syntax highlighting and real-time feedback.",
-            "Added robust error handling and rate limiting to ensure reliability and stability during high-volume API interactions."
-        ],
-        tags: ["Node.js", "Gemini API", "React"],
-        links: { demo: "https://ai-powered-code-reviewer-uxfo.vercel.app/", code: "https://github.com/VRAJESH-31/Ai-powered-Code-Reviewer" },
-        image: "https://images.unsplash.com/photo-1555099962-4199c345e5dd?q=80&w=2070&auto=format&fit=crop"
-    }
+
 ];
 
 function ProjectCard({ project, index }) {
-    const [isFlipped, setIsFlipped] = useState(false);
+    const projectId = project.id || project.title.toLowerCase().replace(/\s+/g, '-');
 
     return (
         <article
@@ -182,104 +227,54 @@ function ProjectCard({ project, index }) {
                             </motion.div>
                         )}
 
-                        <motion.button
-                            onClick={() => setIsFlipped(!isFlipped)}
-                            whileHover={{ scale: 1.05, y: -2 }}
-                            whileTap={{ scale: 0.95 }}
-                            className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-purple-600 to-cyan-600 text-white font-bold shadow-lg hover:shadow-xl hover:shadow-purple-500/30 transition-all duration-300"
+                        <Link
+                            to={`/project/${projectId}`}
+                            className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-purple-600 to-cyan-600 text-white font-bold shadow-lg hover:shadow-xl hover:shadow-purple-500/30 transition-all duration-300 group cursor-pointer"
                         >
-                            {isFlipped ? (
-                                <>
-                                    <ArrowLeft size={18} />
-                                    Back
-                                </>
-                            ) : (
-                                <>
-                                    View Details
-                                    <ArrowUpRight size={18} />
-                                </>
-                            )}
-                        </motion.button>
+                            View Details
+                            <ArrowUpRight size={18} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                        </Link>
+
+                        <Link
+                            to={`/project/${projectId}?tab=architecture`}
+                            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-gray-300 font-medium hover:text-cyan-400 hover:bg-white/10 hover:border-cyan-500/30 transition-all duration-300 cursor-pointer"
+                        >
+                            <Cpu size={16} />
+                            Architecture
+                        </Link>
+
+                        <Link
+                            to={`/project/${projectId}?tab=workflow`}
+                            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-gray-300 font-medium hover:text-purple-400 hover:bg-white/10 hover:border-purple-500/30 transition-all duration-300 cursor-pointer"
+                        >
+                            <GitBranch size={16} />
+                            Workflow
+                        </Link>
                     </div>
                 </div>
 
                 {/* Right: Image/Details Container */}
-                <motion.div 
+                <motion.div
                     whileHover={{ scale: 1.02, y: -5 }}
                     transition={{ duration: 0.3 }}
-                    className="relative w-full aspect-[16/11] md:aspect-auto md:h-[70vh] rounded-3xl overflow-hidden border border-white/20 bg-gradient-to-br from-black/30 to-black/10 backdrop-blur-md shadow-2xl group"
+                    className="relative w-full aspect-[16/11] md:aspect-auto md:h-[70vh] rounded-3xl overflow-hidden border border-white/20 bg-gradient-to-br from-black/30 to-black/10 backdrop-blur-md shadow-2xl group cursor-pointer"
                 >
-                    <motion.div
-                        className="absolute inset-0 w-full h-full"
-                        initial={false}
-                        animate={{ rotateY: isFlipped ? 180 : 0 }}
-                        transition={{ duration: 0.6, ease: "easeInOut" }}
-                        style={{ transformStyle: "preserve-3d" }}
-                    >
-                        {/* Front - Image */}
-                        <div 
-                            className="absolute inset-0 w-full h-full"
-                            style={{ backfaceVisibility: "hidden" }}
-                        >
-                            <img
-                                src={project.image}
-                                alt={project.title}
-                                className="absolute inset-0 w-full h-full object-cover opacity-70"
-                                loading="lazy"
-                            />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
+                    <Link to={`/project/${projectId}`} className="block absolute inset-0 w-full h-full">
+                        <img
+                            src={project.image}
+                            alt={project.title}
+                            className="absolute inset-0 w-full h-full object-cover opacity-70 group-hover:opacity-100 transition-opacity duration-500"
+                            loading="lazy"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent mix-blend-multiply" />
 
-                            {/* Subtle UI chrome */}
-                            <div className="absolute top-5 left-5 flex items-center gap-2">
-                                <span className="w-2.5 h-2.5 rounded-full bg-red-500/60" />
-                                <span className="w-2.5 h-2.5 rounded-full bg-yellow-500/60" />
-                                <span className="w-2.5 h-2.5 rounded-full bg-green-500/60" />
-                            </div>
+                        {/* Subtle UI chrome */}
+                        <div className="absolute top-5 left-5 flex items-center gap-2 opacity-80">
+                            <span className="w-2.5 h-2.5 rounded-full bg-red-500/60" />
+                            <span className="w-2.5 h-2.5 rounded-full bg-yellow-500/60" />
+                            <span className="w-2.5 h-2.5 rounded-full bg-green-500/60" />
                         </div>
-
-                        {/* Back - Details */}
-                        <div 
-                            className="absolute inset-0 w-full h-full bg-gradient-to-br from-purple-900/20 to-black p-8"
-                            style={{ 
-                                backfaceVisibility: "hidden",
-                                transform: "rotateY(180deg)"
-                            }}
-                        >
-                            <div className="h-full flex flex-col justify-between">
-                                <div>
-                                    <h4 className="text-2xl font-bold text-white mb-6">Project Details</h4>
-                                    <ul className="space-y-4">
-                                        {project.description.map((point, i) => (
-                                            <li key={i} className="text-gray-300 leading-relaxed flex gap-3">
-                                                <span className="text-purple-400 mt-1.5 flex-shrink-0">•</span>
-                                                <span>{point}</span>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
-                                
-                                <div className="flex flex-col gap-4">
-                                    {project.links.demo && project.links.demo !== "#" && (
-                                        <button
-                                            onClick={() => window.open(project.links.demo, '_blank')}
-                                            className="w-full inline-flex items-center justify-center gap-2 px-6 py-4 rounded-xl bg-green-600 hover:bg-green-700 text-white font-bold transition-colors"
-                                        >
-                                            <Play size={20} />
-                                            Play Demo Video
-                                        </button>
-                                    )}
-                                    
-                                    <button
-                                        onClick={() => setIsFlipped(false)}
-                                        className="w-full inline-flex items-center justify-center gap-2 px-6 py-4 rounded-xl bg-white/10 border border-white/20 text-white font-bold hover:bg-white/20 transition-colors"
-                                    >
-                                        <ArrowLeft size={20} />
-                                        Back to Preview
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </motion.div>
+                    </Link>
                 </motion.div>
             </div>
         </article>
@@ -323,8 +318,9 @@ const Projects = () => {
                     start: "top top",
                     // End exactly when horizontal scroll completes (when last card is fully visible)
                     // No extra buffer - unpin immediately when scroll distance is reached
-                    end: () => `+=${getScrollDistance()}`,
-                    scrub: 1,
+                    // Divided by 2 to make horizontal scrolling twice as fast (show ~2 projects per scroll)
+                    end: () => `+=${getScrollDistance() / 2}`,
+                    scrub: 1.5,
                     pin: true, // pin the wrapper (which contains only the cards now)
                     anticipatePin: 1,
                     invalidateOnRefresh: true,
