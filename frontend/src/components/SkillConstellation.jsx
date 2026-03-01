@@ -5,7 +5,7 @@ import * as THREE from 'three';
 import { motion, AnimatePresence } from 'framer-motion';
 
 // Expanded Skill Data
-const skillGroups = [
+export const skillGroups = [
     {
         name: "Languages",
         color: "#f7df1e", // Yellow
@@ -66,6 +66,18 @@ const skillGroups = [
             { name: "DBMS", position: [0, -1, -8], color: "#ff3333", desc: "Database Systems" },
             { name: "OS", position: [-2, -4, -5], color: "#33cc33", desc: "Operating Systems" },
             { name: "Networks", position: [2, -4, -5], color: "#cc33cc", desc: "Computer Networks" },
+        ]
+    },
+    {
+        name: "AI Tools",
+        color: "#ff00ff", // Magenta/Neon Pink
+        position: [4, 4, -4],
+        size: 1.6,
+        children: [
+            { name: "LLMs", position: [6, 6, -3], color: "#ff00aa", desc: "Large Language Models" },
+            { name: "Vibe Coding", position: [3, 6, -6], color: "#aa00ff", desc: "AI-assisted flow state" },
+            { name: "Generative AI", position: [5, 3, -6], color: "#ff33cc", desc: "Content & Code Gen" },
+            { name: "Cursor/Copilot", position: [2, 5, -3], color: "#ffffff", desc: "AI pair programming" }
         ]
     }
 ];
@@ -144,19 +156,19 @@ const Node = ({ position, name, color, size = 1, desc, onClick, onHover, isSelec
             // Main orb rotation
             ref.current.rotation.y += 0.003;
             ref.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.2) * 0.1;
-            
+
             // Inner core rotation (opposite direction)
             if (innerRef.current) {
                 innerRef.current.rotation.y -= 0.01;
                 innerRef.current.rotation.z = Math.sin(state.clock.elapsedTime * 0.8) * 0.2;
             }
-            
+
             // Glow pulsing
             if (glowRef.current) {
                 const pulseScale = 1 + Math.sin(state.clock.elapsedTime * 2) * 0.1;
                 glowRef.current.scale.setScalar(pulseScale);
             }
-            
+
             // Particle orbit
             if (particlesRef.current) {
                 particlesRef.current.rotation.y = state.clock.elapsedTime * 0.5;
@@ -255,7 +267,7 @@ const Node = ({ position, name, color, size = 1, desc, onClick, onHover, isSelec
                     ))}
                 </group>
 
-                
+
                 {/* Label Container */}
                 <Html distanceFactor={12} style={{ pointerEvents: 'none' }} position={[0, -1.2, 0]}>
                     <div className={`flex flex-col items-center transition-all duration-500 ${(isSelected || isHovered || (isFocusMode && isRelated)) ? 'opacity-100 scale-110' : (isFocusMode ? 'opacity-10 blur-sm scale-75' : 'opacity-40 scale-90')}`}>
