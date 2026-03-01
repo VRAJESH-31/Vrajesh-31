@@ -1,7 +1,7 @@
 import { useLayoutEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowUpRight, Github, Play, Cpu, GitBranch } from "lucide-react";
+import { ArrowUpRight, Github, Play, Cpu, GitBranch, Terminal as TerminalIcon } from "lucide-react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import SectionBackground from '../components/SectionBackground';
@@ -146,34 +146,38 @@ function ProjectCard({ project, index }) {
         <article
             className={`
                 relative flex-shrink-0
-                w-full md:w-screen md:min-w-[100vw]
+                w-full md:w-[90vw] lg:w-[80vw] xl:w-[70vw]
                 h-auto md:h-full
                 px-6 md:px-16 lg:px-24
                 py-10 md:py-0
-                flex items-center
-                ${index < projects.length - 1 ? 'border-r border-white/10' : ''}
+                flex items-center justify-center
+                ${index < projects.length - 1 ? 'border-r border-white/5 md:pr-32 lg:pr-48' : ''}
             `}
         >
             <div
                 className="
-                    w-full h-full
+                    w-full h-full max-w-7xl
                     grid grid-cols-1 md:grid-cols-2
-                    gap-8 md:gap-12
+                    gap-8 md:gap-16
                     items-center
+                    pb-24 md:pb-32
                 "
             >
                 {/* Left: Text */}
-                <div className="space-y-6">
-                    <div className="space-y-3">
-                        <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/10 text-xs font-bold font-mono text-gray-300">
+                <div className="space-y-4 md:space-y-6">
+                    <div className="space-y-2 md:space-y-4">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-sm bg-[#111] border border-white/10 text-xs font-mono text-cyan-400">
+                            <TerminalIcon className="w-3.5 h-3.5" />
                             {project.category}
-                        </span>
+                        </div>
 
-                        <h3 className="text-4xl md:text-6xl font-display font-bold leading-[1.05] tracking-tight">
-                            <span className="text-white">{project.title}</span>
+                        <h3 className="text-3xl md:text-5xl lg:text-6xl font-display font-bold leading-tight tracking-tight">
+                            <span className="text-white hover:text-cyan-400 transition-colors duration-300">{project.title}</span>
                         </h3>
 
-                        <p className="text-gray-400 text-lg md:text-xl leading-relaxed max-w-xl">
+                        <div className="h-[2px] w-16 bg-gradient-to-r from-purple-500 to-cyan-500" />
+
+                        <p className="text-gray-400 text-base md:text-lg leading-relaxed max-w-xl font-sans line-clamp-3 md:line-clamp-4">
                             {project.summary}
                         </p>
                     </div>
@@ -184,7 +188,7 @@ function ProjectCard({ project, index }) {
                                 key={tag}
                                 whileHover={{ scale: 1.05, y: -2 }}
                                 transition={{ duration: 0.2 }}
-                                className="px-3 py-1.5 rounded-lg bg-gradient-to-r from-purple-500/10 to-cyan-500/10 border border-purple-400/20 text-xs text-gray-200 font-medium backdrop-blur-sm hover:border-purple-400/40 hover:from-purple-500/20 hover:to-cyan-500/20"
+                                className="px-3 py-1 bg-[#0a0a0a] border border-white/10 text-xs text-gray-400 font-mono hover:border-cyan-500/50 hover:text-cyan-400 transition-colors"
                             >
                                 {tag}
                             </motion.span>
@@ -196,13 +200,13 @@ function ProjectCard({ project, index }) {
                             href={project.links.code}
                             target="_blank"
                             rel="noreferrer"
-                            whileHover={{ scale: 1.05, y: -2 }}
-                            whileTap={{ scale: 0.95 }}
-                            className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-white to-gray-100 text-black font-bold shadow-lg hover:shadow-xl hover:shadow-white/20 transition-all duration-300"
+                            whileHover={{ scale: 1.02, y: -2 }}
+                            whileTap={{ scale: 0.98 }}
+                            className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-sm bg-white text-black font-bold text-sm tracking-wide shadow-[0_0_15px_rgba(255,255,255,0.1)] hover:shadow-[0_0_25px_rgba(255,255,255,0.3)] transition-all duration-300"
                         >
-                            <Github size={18} />
+                            <Github size={16} />
                             Source
-                            <ArrowUpRight size={18} />
+                            <ArrowUpRight size={16} />
                         </motion.a>
 
                         {project.links.demo && project.links.demo !== "#" ? (
@@ -210,69 +214,76 @@ function ProjectCard({ project, index }) {
                                 href={project.links.demo}
                                 target="_blank"
                                 rel="noreferrer"
-                                whileHover={{ scale: 1.05, y: -2 }}
-                                whileTap={{ scale: 0.95 }}
-                                className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-purple-500/20 to-cyan-500/20 border border-purple-400/30 text-white font-bold shadow-lg hover:shadow-xl hover:shadow-purple-500/20 transition-all duration-300"
+                                whileHover={{ scale: 1.02, y: -2 }}
+                                whileTap={{ scale: 0.98 }}
+                                className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-sm bg-[#111] border border-white/10 text-white font-bold text-sm tracking-wide shadow-lg hover:border-purple-500/50 hover:bg-purple-500/10 transition-all duration-300"
                             >
                                 Live Demo
-                                <ArrowUpRight size={18} />
+                                <ArrowUpRight size={16} />
                             </motion.a>
                         ) : (
                             <motion.div
-                                whileHover={{ scale: 1.02 }}
-                                className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-purple-500/10 to-cyan-500/10 border border-purple-400/20 text-purple-300 font-medium backdrop-blur-sm cursor-not-allowed opacity-70"
+                                className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-sm bg-[#0a0a0a] border border-white/5 text-gray-500 font-bold text-sm tracking-wide cursor-not-allowed"
                             >
-                                <span className="w-2 h-2 rounded-full bg-purple-400/50 animate-pulse" />
+                                <span className="w-2 h-2 rounded-full bg-purple-400/30" />
                                 Demo Soon
                             </motion.div>
                         )}
 
                         <Link
                             to={`/project/${projectId}`}
-                            className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-purple-600 to-cyan-600 text-white font-bold shadow-lg hover:shadow-xl hover:shadow-purple-500/30 transition-all duration-300 group cursor-pointer"
+                            className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-sm bg-gradient-to-r from-purple-600 to-cyan-600 text-white font-bold text-sm tracking-wide shadow-[0_0_15px_rgba(124,58,237,0.3)] hover:shadow-[0_0_25px_rgba(124,58,237,0.5)] transition-all duration-300 group cursor-pointer"
                         >
                             View Details
-                            <ArrowUpRight size={18} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                            <ArrowUpRight size={16} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
                         </Link>
+                    </div>
 
+                    <div className="flex flex-wrap gap-3 pt-1">
                         <Link
                             to={`/project/${projectId}?tab=architecture`}
-                            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-gray-300 font-medium hover:text-cyan-400 hover:bg-white/10 hover:border-cyan-500/30 transition-all duration-300 cursor-pointer"
+                            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-sm bg-transparent border border-white/5 text-gray-400 font-mono text-xs hover:text-cyan-400 hover:border-cyan-500/30 transition-all duration-300 cursor-pointer"
                         >
-                            <Cpu size={16} />
-                            Architecture
+                            <Cpu size={14} />
+                            _architecture
                         </Link>
 
                         <Link
                             to={`/project/${projectId}?tab=workflow`}
-                            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-gray-300 font-medium hover:text-purple-400 hover:bg-white/10 hover:border-purple-500/30 transition-all duration-300 cursor-pointer"
+                            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-sm bg-transparent border border-white/5 text-gray-400 font-mono text-xs hover:text-purple-400 hover:border-purple-500/30 transition-all duration-300 cursor-pointer"
                         >
-                            <GitBranch size={16} />
-                            Workflow
+                            <GitBranch size={14} />
+                            _workflow
                         </Link>
                     </div>
                 </div>
 
                 {/* Right: Image/Details Container */}
                 <motion.div
-                    whileHover={{ scale: 1.02, y: -5 }}
-                    transition={{ duration: 0.3 }}
-                    className="relative w-full aspect-[16/11] md:aspect-auto md:h-[70vh] rounded-3xl overflow-hidden border border-white/20 bg-gradient-to-br from-black/30 to-black/10 backdrop-blur-md shadow-2xl group cursor-pointer"
+                    whileHover={{ scale: 1.01 }}
+                    transition={{ duration: 0.4 }}
+                    className="relative w-full aspect-[16/11] md:aspect-auto md:h-[65vh] rounded-sm overflow-hidden border border-white/10 bg-[#0a0a0a] shadow-2xl group cursor-pointer group-hover:border-cyan-500/30"
                 >
                     <Link to={`/project/${projectId}`} className="block absolute inset-0 w-full h-full">
+                        {/* Scanline overlay */}
+                        <div className="absolute inset-0 z-20 pointer-events-none bg-[linear-gradient(rgba(255,255,255,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_4px,3px_100%] opacity-20" />
+
                         <img
                             src={project.image}
                             alt={project.title}
-                            className="absolute inset-0 w-full h-full object-cover opacity-70 group-hover:opacity-100 transition-opacity duration-500"
+                            className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700 ease-out"
                             loading="lazy"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent mix-blend-multiply" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/40 to-transparent mix-blend-multiply z-10" />
 
-                        {/* Subtle UI chrome */}
-                        <div className="absolute top-5 left-5 flex items-center gap-2 opacity-80">
-                            <span className="w-2.5 h-2.5 rounded-full bg-red-500/60" />
-                            <span className="w-2.5 h-2.5 rounded-full bg-yellow-500/60" />
-                            <span className="w-2.5 h-2.5 rounded-full bg-green-500/60" />
+                        {/* Top Terminal Chrome */}
+                        <div className="absolute top-0 left-0 w-full h-8 bg-[#111] border-b border-white/10 z-30 flex items-center px-4 justify-between font-mono text-[10px] text-gray-500">
+                            <div className="flex gap-2 items-center">
+                                <span className="w-2 h-2 rounded-full bg-red-500/80" />
+                                <span className="w-2 h-2 rounded-full bg-yellow-500/80" />
+                                <span className="w-2 h-2 rounded-full bg-green-500/80" />
+                            </div>
+                            <div>{project.id || 'project_file'}.exe</div>
                         </div>
                     </Link>
                 </motion.div>
@@ -319,8 +330,8 @@ const Projects = () => {
                     // End exactly when horizontal scroll completes (when last card is fully visible)
                     // No extra buffer - unpin immediately when scroll distance is reached
                     // Divided by 2 to make horizontal scrolling twice as fast (show ~2 projects per scroll)
-                    end: () => `+=${getScrollDistance() / 2}`,
-                    scrub: 1.5,
+                    end: () => `+=${getScrollDistance() / 1.5}`, // Adjusted for wider cards
+                    scrub: 1, // Smoother scrub
                     pin: true, // pin the wrapper (which contains only the cards now)
                     anticipatePin: 1,
                     invalidateOnRefresh: true,
@@ -355,31 +366,35 @@ const Projects = () => {
     return (
         <section
             id="projects"
-            className="w-full relative overflow-hidden"
+            className="w-full relative overflow-hidden bg-[#050505]"
         >
-            {/* Background elements - directly applied to avoid GSAP conflicts */}
-            <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-                <div className="absolute top-1/4 -left-64 w-96 h-96 bg-purple-600/20 rounded-full blur-[100px]" />
-                <div className="absolute bottom-1/4 -right-64 w-96 h-96 bg-cyan-600/20 rounded-full blur-[100px]" />
-            </div>
+            {/* Minimalist Tech Background */}
+            <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.015)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.015)_1px,transparent_1px)] bg-[size:60px_60px] pointer-events-none z-0" />
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-cyan-500/20 to-transparent pointer-events-none z-0" />
 
             {/* Header - OUTSIDE pinned area, scrolls normally */}
-            <div className="w-full py-20 md:py-28 relative z-10">
+            <div className="w-full py-20 md:py-28 relative z-10 border-b border-white/5">
                 <div className="max-w-[1400px] w-full mx-auto px-6 md:px-10">
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.6 }}
-                        className="space-y-4 text-center"
+                        className="space-y-4 text-center flex flex-col items-center"
                     >
-                        <h2 className="text-4xl md:text-6xl font-display font-bold">
-                            Mission{" "}
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-cyan-400">
-                                Control
-                            </span>
-                        </h2>
-                        <p className="text-gray-400 text-base md:text-lg max-w-2xl mx-auto">
-                            Scroll down to scan projects horizontally. On mobile, projects render as a normal vertical list.
+                        <div className="inline-flex items-center gap-3">
+                            <span className="text-purple-500 font-mono text-3xl font-normal">{'['}</span>
+                            <h2 className="text-4xl md:text-6xl font-display font-bold">
+                                Featured{" "}
+                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-cyan-400">
+                                    Projects
+                                </span>
+                            </h2>
+                            <span className="text-purple-500 font-mono text-3xl font-normal">{']'}</span>
+                        </div>
+                        <div className="h-[2px] w-full max-w-[150px] bg-gradient-to-r from-purple-500/50 to-cyan-500/50 mt-4" />
+
+                        <p className="text-gray-500 font-mono text-sm mt-6 uppercase tracking-widest pt-4">
+                            My Portfolio // Works I'm proud of
                         </p>
                     </motion.div>
                 </div>

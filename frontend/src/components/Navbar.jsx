@@ -1,70 +1,59 @@
-import { motion, useMotionValue, useTransform, useSpring } from 'framer-motion';
-import { useRef } from 'react';
+import { motion } from 'framer-motion';
 import { Link } from 'react-scroll';
 import { Home, User, Code, Briefcase, FolderOpen, Mail } from 'lucide-react';
 
 const Navbar = () => {
     const navItems = [
-        { name: 'Home', icon: <Home size={22} />, to: 'home' },
-        { name: 'About', icon: <User size={22} />, to: 'about' },
-        { name: 'Experience', icon: <Briefcase size={22} />, to: 'experience' },
-        { name: 'Skills', icon: <Code size={22} />, to: 'skills' },
-        { name: 'Projects', icon: <FolderOpen size={22} />, to: 'projects' },
-        { name: 'Contact', icon: <Mail size={22} />, to: 'contact' },
+        { name: 'Home', icon: <Home size={20} />, to: 'home' },
+        { name: 'About', icon: <User size={20} />, to: 'about' },
+        { name: 'Experience', icon: <Briefcase size={20} />, to: 'experience' },
+        { name: 'Skills', icon: <Code size={20} />, to: 'skills' },
+        { name: 'Projects', icon: <FolderOpen size={20} />, to: 'projects' },
+        { name: 'Contact', icon: <Mail size={20} />, to: 'contact' },
     ];
 
-    const mouseX = useMotionValue(Infinity);
-
     return (
-        <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50">
+        <div className="fixed bottom-6 md:bottom-10 left-1/2 transform -translate-x-1/2 z-50">
             <motion.div
-                onMouseMove={(e) => mouseX.set(e.pageX)}
-                onMouseLeave={() => mouseX.set(Infinity)}
-                className="flex items-end gap-3 px-4 py-3 rounded-full bg-white/10 backdrop-blur-md border border-white/20 shadow-2xl h-16"
+                initial={{ y: 50, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.8, ease: "easeOut" }}
+                className="flex items-center gap-1.5 md:gap-2 px-3 py-2.5 bg-black/40 backdrop-blur-2xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.6),inset_0_1px_1px_rgba(255,255,255,0.05)] rounded-full relative"
             >
                 {navItems.map((item) => (
-                    <DockIcon key={item.name} mouseX={mouseX} item={item} />
+                    <DockIcon key={item.name} item={item} />
                 ))}
             </motion.div>
         </div>
     );
 };
 
-function DockIcon({ mouseX, item }) {
-    const ref = useRef(null);
-
-    const distance = useTransform(mouseX, (val) => {
-        const bounds = ref.current?.getBoundingClientRect() ?? { x: 0, width: 0 };
-        return val - bounds.x - bounds.width / 2;
-    });
-
-    // Mac Dock Scaling Logic
-    // Base width: 45px. Max width: 80px. Range of influence: 150px.
-    const widthSync = useTransform(distance, [-150, 0, 150], [45, 80, 45]);
-    const width = useSpring(widthSync, { mass: 0.1, stiffness: 150, damping: 12 });
-
+function DockIcon({ item }) {
     return (
         <Link
             to={item.to}
             smooth={true}
             duration={700}
-            activeClass="" // Removed activeClass from Link to handle styling inside motion.div manually if needed, or rely on visual size
-            className="group relative flex flex-col items-center"
+            activeClass="active-nav-item text-white"
+            spy={true}
+            className="group relative flex items-center justify-center w-12 h-12 md:w-14 md:h-14 rounded-full text-gray-400 hover:text-white hover:bg-white/5 transition-all duration-300 cursor-pointer overflow-hidden"
         >
-            <motion.div
-                ref={ref}
-                style={{ width, height: width }}
-                className="rounded-full bg-white/10 hover:bg-white/20 border border-white/10 flex items-center justify-center text-gray-300 hover:text-white cursor-pointer transition-colors shadow-lg"
-            >
-                {/* Scale icon based on container width implies manual scaling or just centering */}
-                {/* Since width changes, the centered icon remains 'standard' size unless we scale it too. 
-                    Standard Mac dock just scales the container. We can scale icon slightly if desired. */}
-                <div>{item.icon}</div>
-            </motion.div>
+            {/* Active Background Glow */}
+            <div className="absolute inset-0 bg-transparent group-[.active-nav-item]:bg-white/10 transition-colors duration-300" />
 
-            {/* Tooltip */}
-            <span className="absolute -top-12 left-1/2 -translate-x-1/2 px-3 py-1 bg-black/80 text-white text-xs font-bold rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none border border-white/10 backdrop-blur-sm transform translate-y-2 group-hover:translate-y-0 duration-200">
+            {/* Icon Wrapper for click effect */}
+            <div className="relative z-10 transition-transform duration-300 group-hover:-translate-y-1 group-active:scale-95">
+                {item.icon}
+            </div>
+
+            {/* Active Indicator Dot */}
+            <div className="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-cyan-400 opacity-0 group-[.active-nav-item]:opacity-100 transition-opacity duration-300 shadow-[0_0_8px_rgba(6,182,212,0.8)]" />
+
+            {/* Floating Tooltip */}
+            <span className="absolute -top-12 left-1/2 -translate-x-1/2 px-3 py-1.5 bg-[#111] text-gray-200 text-xs font-medium rounded-md opacity-0 group-hover:opacity-100 transition-all duration-300 shadow-xl whitespace-nowrap pointer-events-none translate-y-2 group-hover:-translate-y-1 border border-white/5 backdrop-blur-md">
                 {item.name}
+                {/* Tooltip Triangle */}
+                <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-[#111] border-b border-r border-white/5 rotate-45" />
             </span>
         </Link>
     );

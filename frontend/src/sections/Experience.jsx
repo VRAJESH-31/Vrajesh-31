@@ -1,69 +1,34 @@
 import { motion, useInView } from 'framer-motion';
 import { useRef, useMemo } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { Float, Text3D, Center, PerspectiveCamera, OrbitControls } from '@react-three/drei';
+import { Float, Center, PerspectiveCamera, OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
-import { Calendar, MapPin, Briefcase, Award } from 'lucide-react';
-import SectionBackground from '../components/SectionBackground';
+import { Calendar, MapPin, Briefcase, Award, Terminal } from 'lucide-react';
 
-// 3D Floating Card Component
-function FloatingCard({ position, rotation, delay, children }) {
-    const meshRef = useRef();
-    
-    useFrame((state) => {
-        if (meshRef.current) {
-            meshRef.current.position.y = position[1] + Math.sin(state.clock.elapsedTime + delay) * 0.1;
-            meshRef.current.rotation.y = rotation[1] + Math.sin(state.clock.elapsedTime * 0.5 + delay) * 0.02;
-        }
-    });
-
-    return (
-        <Float speed={2} rotationIntensity={0.1} floatIntensity={0.2}>
-            <mesh ref={meshRef} position={position} rotation={rotation}>
-                <boxGeometry args={[3, 4, 0.1]} />
-                <meshStandardMaterial
-                    color="#1a1a2e"
-                    metalness={0.8}
-                    roughness={0.2}
-                    emissive="#7c3aed"
-                    emissiveIntensity={0.1}
-                />
-            </mesh>
-        </Float>
-    );
-}
-
-// 3D Floating Orbs Component
-function FloatingOrbs() {
+// 3D Geometric Wireframe Component (Replaces playful Orbs)
+function GeometricWireframe() {
     const groupRef = useRef();
-    
+
     useFrame((state) => {
         if (groupRef.current) {
-            groupRef.current.rotation.y = state.clock.elapsedTime * 0.1;
+            groupRef.current.rotation.y = state.clock.elapsedTime * 0.15;
+            groupRef.current.rotation.x = state.clock.elapsedTime * 0.1;
         }
     });
 
-    const orbs = useMemo(() => [
-        { position: [-3, 2, -2], color: "#7c3aed", size: 0.5 },
-        { position: [3, -2, -1], color: "#06b6d4", size: 0.7 },
-        { position: [-2, -3, 1], color: "#a855f7", size: 0.4 },
-        { position: [2, 3, 0], color: "#0891b2", size: 0.6 },
-    ], []);
-
     return (
-        <group ref={groupRef}>
-            {orbs.map((orb, i) => (
-                <mesh key={i} position={orb.position}>
-                    <sphereGeometry args={[orb.size, 32, 32]} />
-                    <meshStandardMaterial
-                        color={orb.color}
-                        metalness={0.9}
-                        roughness={0.1}
-                        emissive={orb.color}
-                        emissiveIntensity={0.5}
-                    />
+        <group ref={groupRef} position={[0, 0, 0]}>
+            <Float speed={1.5} rotationIntensity={0.5} floatIntensity={1}>
+                {/* Remove the icosahedron mesh entirely since three.js doesn't have it explicitly without extra add-ons sometimes, use a generic box instead to be safe */}
+                <mesh>
+                    <boxGeometry args={[3, 3, 3]} />
+                    <meshBasicMaterial color="#06b6d4" wireframe={true} transparent opacity={0.3} />
                 </mesh>
-            ))}
+                <mesh scale={0.8}>
+                    <octahedronGeometry args={[2, 0]} />
+                    <meshBasicMaterial color="#a855f7" wireframe={true} transparent opacity={0.2} />
+                </mesh>
+            </Float>
         </group>
     );
 }
@@ -81,35 +46,34 @@ const Experience = () => {
             type: "current",
             achievements: [
                 "Architected an NFC-enabled attendance backend fully integrated with the college ERP system, successfully automating student attendance tracking.",
-                "Engineered scalable RESTful APIs using Node.js and Express.js to facilitate secure NFC authentication, real-time data synchronization, and identity verification.",
-                "Implemented robust database solutions using MongoDB with optimized query performance, ensuring consistent and rapid response times for data retrieval."
+                "Engineered scalable RESTful APIs using Node.js and Express.js to facilitate secure NFC authentication, real-time data synchronization.",
+                "Implemented robust database solutions using MongoDB with optimized query performance for rapid data retrieval."
             ],
-            icon: <Briefcase className="w-5 h-5" />,
-            color: "from-purple-500 to-cyan-500"
+            icon: <Terminal className="w-5 h-5" />,
+            color: "from-purple-500 to-cyan-500",
+            borderColor: "border-cyan-500/30",
+            hoverBorder: "hover:border-cyan-400"
         }
     ];
 
     return (
-        <section id="experience" className="w-full min-h-screen flex items-center justify-center px-6 py-20 relative overflow-hidden">
-            {/* Background elements - directly applied */}
-            <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-                <div className="absolute top-1/4 -left-64 w-96 h-96 bg-purple-600/20 rounded-full blur-[100px]" />
-                <div className="absolute bottom-1/4 -right-64 w-96 h-96 bg-cyan-600/20 rounded-full blur-[100px]" />
-            </div>
+        <section id="experience" className="w-full min-h-screen flex items-center justify-center px-6 py-20 relative overflow-hidden bg-[#050505]">
 
-            {/* 3D Background Canvas */}
-            <div className="absolute inset-0 z-0">
+            {/* Minimalist Grid Background */}
+            <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none z-0" />
+            <div className="absolute top-0 right-1/3 w-[1px] h-full bg-purple-500/10 pointer-events-none z-0 hidden md:block" />
+
+            {/* 3D Background Canvas - Wireframe Geometry */}
+            <div className="absolute inset-0 z-0 opacity-40 mix-blend-screen pointer-events-none">
                 <Canvas camera={{ position: [0, 0, 10], fov: 50 }}>
                     <PerspectiveCamera makeDefault position={[0, 0, 10]} />
-                    <ambientLight intensity={0.3} />
-                    <pointLight position={[10, 10, 10]} intensity={1} color="#7c3aed" />
-                    <pointLight position={[-10, -10, 10]} intensity={0.5} color="#06b6d4" />
-                    <FloatingOrbs />
+                    <ambientLight intensity={0.5} />
+                    <GeometricWireframe />
                     <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={0.5} />
                 </Canvas>
             </div>
 
-            <div ref={ref} className="max-w-7xl w-full mx-auto relative z-50">
+            <div ref={ref} className="max-w-7xl w-full mx-auto relative z-10 pt-10">
                 {/* Section Header */}
                 <motion.div
                     initial={{ opacity: 0, y: 30 }}
@@ -117,15 +81,17 @@ const Experience = () => {
                     transition={{ duration: 0.8 }}
                     className="text-center mb-20"
                 >
-                    <h2 className="text-4xl md:text-7xl font-display font-bold mb-4">
-                        Experience <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-cyan-400">Journey</span>
-                    </h2>
-                    <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-                        My professional and academic path shaped by innovation and continuous learning
-                    </p>
-                    <div className="mt-6 flex justify-center">
-                        <div className="h-1 w-32 bg-gradient-to-r from-purple-500 to-cyan-500 rounded-full" />
+                    <div className="inline-flex flex-col items-center">
+                        <h2 className="text-4xl md:text-6xl font-display font-bold mb-2 flex items-center gap-3">
+                            <span className="text-cyan-500 font-mono text-3xl font-normal">{'<'}</span>
+                            Work <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-cyan-400">Experience</span>
+                            <span className="text-cyan-500 font-mono text-3xl font-normal">{'>'}</span>
+                        </h2>
+                        <div className="h-[2px] w-full max-w-[200px] bg-gradient-to-r from-purple-500 to-cyan-500 mt-2" />
                     </div>
+                    <p className="text-gray-500 font-mono text-sm mt-6 uppercase tracking-widest">
+                        Career Journey // Professional Experience
+                    </p>
                 </motion.div>
 
                 {/* Experience Cards */}
@@ -133,89 +99,91 @@ const Experience = () => {
                     {experiences.map((exp, index) => (
                         <motion.div
                             key={index}
-                            initial={{ opacity: 0, x: index % 2 === 0 ? -100 : 100 }}
-                            animate={{ opacity: 1, x: 0 }}
+                            initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
+                            animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
                             transition={{ duration: 0.8, delay: index * 0.2 }}
-                            className="relative"
+                            className="relative max-w-4xl mx-auto"
                         >
-                            
-                            <div className="flex flex-col md:flex-row gap-8 items-center justify-center">
-                                {/* Timeline Node */}
-                                <div className="flex-shrink-0 relative">
-                                    <div className={`w-16 h-16 rounded-full bg-gradient-to-r ${exp.color} p-0.5`}>
-                                        <div className="w-full h-full bg-black rounded-full flex items-center justify-center text-white">
+                            <div className="flex flex-col md:flex-row gap-6 items-start">
+                                {/* Timeline Node (Sharper) */}
+                                <div className="flex-shrink-0 relative mt-2 hidden md:block">
+                                    <div className={`w-12 h-12 rounded-sm bg-gradient-to-br ${exp.color} p-[1px]`}>
+                                        <div className="w-full h-full bg-[#0a0a0a] flex items-center justify-center text-white">
                                             {exp.icon}
                                         </div>
                                     </div>
-                                    {exp.type === 'current' && (
-                                        <motion.div
-                                            animate={{ scale: [1, 1.2, 1] }}
-                                            transition={{ duration: 2, repeat: Infinity }}
-                                            className="absolute inset-0 w-16 h-16 rounded-full bg-gradient-to-r from-purple-500 to-cyan-500 opacity-30 blur-xl"
-                                        />
-                                    )}
+                                    {/* Vertical Line Connector */}
+                                    <div className="absolute top-12 left-1/2 -translate-x-1/2 w-[1px] h-32 bg-gradient-to-b from-cyan-500/50 to-transparent" />
                                 </div>
 
-                                {/* Experience Card */}
+                                {/* Experience Card (Sharper, Tech Vibe) */}
                                 <motion.div
-                                    whileHover={{ scale: 1.02, y: -5 }}
-                                    transition={{ duration: 0.3 }}
-                                    className="flex-1 max-w-4xl bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-8 shadow-[0_0_50px_rgba(0,0,0,0.3)] hover:shadow-[0_0_80px_rgba(124,58,237,0.3)] transition-all duration-500"
+                                    whileHover={{ y: -2 }}
+                                    transition={{ duration: 0.2 }}
+                                    className={`flex-1 bg-[#0d0d0d] border ${exp.borderColor} ${exp.hoverBorder} rounded-sm p-6 md:p-8 shadow-2xl transition-all duration-300 relative group w-full`}
                                 >
-                                    {/* Card Header */}
-                                    <div className="flex flex-col md:flex-row md:items-center justify-between mb-6">
-                                        <div>
-                                            <h3 className="text-2xl md:text-3xl font-bold text-white mb-2">{exp.title}</h3>
-                                            <p className={`text-lg font-semibold bg-gradient-to-r ${exp.color} bg-clip-text text-transparent`}>
-                                                {exp.role}
-                                            </p>
-                                        </div>
-                                        <div className="flex flex-col sm:flex-row sm:items-center gap-2 mt-4 md:mt-0 text-gray-400">
-                                            <div className="flex items-center gap-2">
-                                                <Calendar className="w-4 h-4" />
-                                                <span className="text-sm">{exp.period}</span>
+                                    <div className="relative z-10 w-full overflow-hidden">
+                                        {/* Card Header */}
+                                        <div className="flex flex-col md:flex-row md:items-start justify-between mb-6 border-b border-white/5 pb-6">
+                                            <div>
+                                                <h3 className="text-2xl font-bold text-white mb-1 group-hover:text-cyan-400 transition-colors">{exp.title}</h3>
+                                                <p className="text-md font-mono text-purple-400">
+                                                    {exp.role}
+                                                </p>
                                             </div>
-                                            <div className="flex items-center gap-2">
-                                                <MapPin className="w-4 h-4" />
-                                                <span className="text-sm">{exp.location}</span>
+                                            <div className="flex flex-col gap-2 mt-4 md:mt-0 text-gray-400 font-mono text-xs">
+                                                <div className="flex items-center gap-2 bg-[#111] px-3 py-1.5 rounded-sm border border-white/5">
+                                                    <Calendar className="w-3.5 h-3.5 text-cyan-500" />
+                                                    <span>{exp.period}</span>
+                                                </div>
+                                                <div className="flex items-center gap-2 bg-[#111] px-3 py-1.5 rounded-sm border border-white/5">
+                                                    <MapPin className="w-3.5 h-3.5 text-purple-500" />
+                                                    <span>{exp.location}</span>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
 
-                                    {/* Achievements */}
-                                    <div className="space-y-4">
-                                        <h4 className="text-white font-semibold mb-3">Key Achievements:</h4>
-                                        {exp.achievements.map((achievement, i) => (
-                                            <motion.div
-                                                key={i}
-                                                initial={{ opacity: 0, x: -20 }}
-                                                animate={{ opacity: 1, x: 0 }}
-                                                transition={{ duration: 0.5, delay: index * 0.2 + i * 0.1 }}
-                                                className="flex gap-3"
-                                            >
-                                                <div className={`w-2 h-2 rounded-full bg-gradient-to-r ${exp.color} mt-2 flex-shrink-0`} />
-                                                <p className="text-gray-300 leading-relaxed">{achievement}</p>
-                                            </motion.div>
-                                        ))}
-                                    </div>
+                                        {/* Achievements */}
+                                        <div className="space-y-3">
+                                            <div className="font-mono text-xs text-gray-500 mb-4 uppercase tracking-wider">
+                                                {'>'} Responsibilities:
+                                            </div>
+                                            {exp.achievements.map((achievement, i) => (
+                                                <div key={i} className="flex gap-4 items-start group/item">
+                                                    <span className="font-mono text-cyan-500/50 mt-1 select-none text-xs">{(i + 1).toString().padStart(2, '0')}</span>
+                                                    <p className="text-gray-300 leading-relaxed text-sm group-hover/item:text-white transition-colors">
+                                                        {achievement}
+                                                    </p>
+                                                </div>
+                                            ))}
+                                        </div>
 
-                                    {/* Status Badge */}
-                                    {exp.type === 'current' && (
-                                        <motion.div
-                                            animate={{ opacity: [0.5, 1, 0.5] }}
-                                            transition={{ duration: 2, repeat: Infinity }}
-                                            className="mt-6 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-500/20 border border-green-500/30"
-                                        >
-                                            <div className="w-2 h-2 rounded-full bg-green-500" />
-                                            <span className="text-green-400 text-sm font-medium">Currently Working</span>
-                                        </motion.div>
-                                    )}
+                                        {/* Status Badge */}
+                                        {exp.type === 'current' && (
+                                            <div className="mt-8 pt-4 border-t border-white/5 flex items-center justify-between">
+                                                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-sm bg-green-950/30 border border-green-500/30">
+                                                    <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                                                    <span className="text-green-400 font-mono text-[10px] uppercase tracking-wider">Status: Active</span>
+                                                </div>
+                                                <div className="text-gray-600 font-mono text-[10px]">
+                                                    Presently Working Here
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
                                 </motion.div>
                             </div>
                         </motion.div>
                     ))}
                 </div>
             </div>
+
+            <style jsx>{`
+                @keyframes scan {
+                    0% { transform: translateY(-100%); }
+                    100% { transform: translateY(100%); }
+                }
+            `}</style>
         </section>
     );
 };

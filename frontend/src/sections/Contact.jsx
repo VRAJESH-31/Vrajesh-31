@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, Mail, MapPin, Phone, CheckCircle, Loader2, MessageCircle, Copy, Check } from 'lucide-react';
+import { Send, Mail, MapPin, Phone, CheckCircle, Loader2, MessageCircle, Copy, Check, TerminalSquare } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 import SectionBackground from '../components/SectionBackground';
 
@@ -27,130 +27,161 @@ const Contact = () => {
     };
 
     return (
-        <SectionBackground className="w-full min-h-screen flex items-center justify-center px-6 pt-12 md:pt-16 pb-20">
-            <section id="contact" className="w-full h-full">
+        <SectionBackground className="w-full min-h-screen flex items-center justify-center px-6 pt-12 md:pt-16 pb-20 bg-[#050505]">
+            <section id="contact" className="w-full h-full relative">
+
+                {/* Minimalist Grid and Accent */}
+                <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.015)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.015)_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none z-0" />
+                <div className="absolute top-0 right-0 w-1/3 h-1/3 bg-gradient-to-bl from-purple-500/10 to-transparent pointer-events-none z-0" />
+
                 <div className="max-w-7xl w-full mx-auto grid grid-cols-1 md:grid-cols-2 gap-16 lg:gap-24 relative z-10">
 
-                {/* Contact Info */}
-                <motion.div
-                    initial={{ opacity: 0, x: -50 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.8 }}
-                    className="space-y-12 flex flex-col justify-center"
-                >
-                    <div>
-                        <h2 className="text-5xl md:text-7xl font-display font-bold mb-6">
-                            Let's <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-cyan-400">Connect</span>
-                        </h2>
-                        <p className="text-gray-400 text-lg max-w-md leading-relaxed">
-                            Have a project in mind or just want to chat about AI and Web?
-                            I'm always open to new opportunities and collaborations.
-                        </p>
-                    </div>
+                    {/* Contact Info */}
+                    <motion.div
+                        initial={{ opacity: 0, x: -50 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.8 }}
+                        className="space-y-12 flex flex-col justify-center"
+                    >
+                        <div className="space-y-4">
+                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-sm bg-[#111] border border-white/10 text-xs font-mono text-cyan-400">
+                                <TerminalSquare className="w-3.5 h-3.5" />
+                                LET'S TALK
+                            </div>
+                            <h2 className="text-5xl md:text-7xl font-display font-bold mb-6">
+                                Get In <br />
+                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-cyan-400">
+                                    Touch
+                                </span>
+                            </h2>
 
-                    <div className="space-y-8">
-                        <ContactItem
-                            icon={<Mail />}
-                            title="Email"
-                            value="npandyavrajesh31@gmail.com"
-                            link="mailto:npandyavrajesh31@gmail.com?subject=Let's Connect"
-                        />
-                        <ContactItem icon={<Phone />} title="Phone" value="+91 93272 20321" />
-                        <ContactItem icon={<MapPin />} title="Location" value="Vadodara, India" />
-                    </div>
-                </motion.div>
+                            <div className="h-[2px] w-16 bg-gradient-to-r from-purple-500 to-cyan-500" />
 
-                {/* Interactive Contact Form */}
-                <div className="relative flex items-center justify-center">
-                    <AnimatePresence mode="wait">
-                        {status === 'sent' ? (
-                            <motion.div
-                                key="success"
-                                initial={{ scale: 0, opacity: 0 }}
-                                animate={{ scale: 1, opacity: 1 }}
-                                transition={{ type: "spring", stiffness: 200, damping: 20 }}
-                                className="bg-white/5 backdrop-blur-xl border border-white/10 p-12 rounded-full flex flex-col items-center justify-center text-center aspect-square max-w-md"
-                            >
+                            <p className="text-gray-400 text-base md:text-lg max-w-md leading-relaxed font-sans pt-4">
+                                Feel free to reach out for collaborations, opportunities, or just to say hi!
+                            </p>
+                        </div>
+
+                        <div className="space-y-6">
+                            <ContactItem
+                                icon={<Mail size={20} />}
+                                title="Email"
+                                value="npandyavrajesh31@gmail.com"
+                                link="mailto:npandyavrajesh31@gmail.com?subject=Let's Connect"
+                            />
+                            <ContactItem
+                                icon={<Phone size={20} />}
+                                title="Phone"
+                                value="+91 93272 20321"
+                            />
+                            <ContactItem
+                                icon={<MapPin size={20} />}
+                                title="Location"
+                                value="Vadodara, India"
+                            />
+                        </div>
+                    </motion.div>
+
+                    {/* Interactive Contact Form */}
+                    <div className="relative flex items-center justify-center">
+                        <AnimatePresence mode="wait">
+                            {status === 'sent' ? (
                                 <motion.div
-                                    initial={{ scale: 0 }}
-                                    animate={{ scale: 1.2, rotate: 360 }}
-                                    transition={{ delay: 0.2, type: "spring" }}
-                                    className="mb-4 text-green-400"
+                                    key="success"
+                                    initial={{ scale: 0.9, opacity: 0 }}
+                                    animate={{ scale: 1, opacity: 1 }}
+                                    transition={{ type: "spring", stiffness: 200, damping: 20 }}
+                                    className="bg-[#0a0a0a] border border-cyan-500/30 p-12 rounded-sm flex flex-col items-center justify-center text-center aspect-square max-w-md shadow-[0_0_30px_rgba(6,182,212,0.1)] w-full"
                                 >
-                                    <CheckCircle size={64} />
+                                    <motion.div
+                                        initial={{ scale: 0 }}
+                                        animate={{ scale: 1 }}
+                                        transition={{ delay: 0.2, type: "spring" }}
+                                        className="mb-6 text-cyan-400"
+                                    >
+                                        <CheckCircle size={48} />
+                                    </motion.div>
+                                    <h3 className="text-xl font-mono text-white mb-2">MESSAGE SENT!</h3>
+                                    <p className="text-gray-400 font-mono text-sm">I will get back to you shortly.</p>
+                                    <button
+                                        onClick={() => {
+                                            setFormState({ name: '', email: '', message: '' });
+                                            setStatus('idle');
+                                        }}
+                                        className="mt-8 px-6 py-2 border border-white/20 hover:border-cyan-500/50 hover:bg-cyan-500/10 hover:text-cyan-400 rounded-sm text-sm font-mono text-gray-400 transition-colors uppercase tracking-widest"
+                                    >
+                                        [ SEND ANOTHER ]
+                                    </button>
                                 </motion.div>
-                                <h3 className="text-2xl font-bold text-white mb-2">Thank you for connecting with me</h3>
-                                <p className="text-gray-400">I'll get back to you soon.</p>
-                                <button
-                                    onClick={() => {
-                                        setFormState({ name: '', email: '', message: '' });
-                                        setStatus('idle');
-                                    }}
-                                    className="mt-6 px-6 py-2 bg-white/10 hover:bg-white/20 rounded-full text-sm text-white/70 transition-colors"
+                            ) : (
+                                <motion.div
+                                    key="form"
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    exit={{ scale: 0.95, opacity: 0, transition: { duration: 0.5, ease: "anticipate" } }}
+                                    className="w-full bg-[#0a0a0a]/80 backdrop-blur-md border border-white/10 p-8 md:p-12 rounded-sm relative group shadow-2xl"
                                 >
-                                    Send Another Signal
-                                </button>
-                            </motion.div>
-                        ) : (
-                            <motion.div
-                                key="form"
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                exit={{ scale: 0, opacity: 0, rotate: 720, transition: { duration: 1.5, ease: "anticipate" } }}
-                                className="w-full bg-white/5 backdrop-blur-xl border border-white/10 p-8 md:p-12 rounded-3xl relative overflow-hidden group"
-                            >
-                                {/* Form Container */}
-                                <form onSubmit={handleSubmit} className="space-y-8 relative z-10">
-                                    <FloatingInput
-                                        label="Name"
-                                        name="name"
-                                        type="text"
-                                        value={formState.name}
-                                        onChange={e => setFormState({ ...formState, name: e.target.value })}
-                                        isFocused={isFocused === 'name'}
-                                        onFocus={() => setIsFocused('name')}
-                                        onBlur={() => setIsFocused('')}
-                                        disabled={status === 'sending'}
-                                        delay={0}
-                                    />
-                                    <FloatingInput
-                                        label="Email"
-                                        name="email"
-                                        type="email"
-                                        value={formState.email}
-                                        onChange={e => setFormState({ ...formState, email: e.target.value })}
-                                        isFocused={isFocused === 'email'}
-                                        onFocus={() => setIsFocused('email')}
-                                        onBlur={() => setIsFocused('')}
-                                        disabled={status === 'sending'}
-                                        delay={0.1}
-                                    />
-                                    <FloatingInput
-                                        label="Message"
-                                        name="message"
-                                        type="textarea"
-                                        value={formState.message}
-                                        onChange={e => setFormState({ ...formState, message: e.target.value })}
-                                        isFocused={isFocused === 'message'}
-                                        onFocus={() => setIsFocused('message')}
-                                        onBlur={() => setIsFocused('')}
-                                        disabled={status === 'sending'}
-                                        delay={0.2}
-                                    />
+                                    {/* Form Container */}
+                                    <form onSubmit={handleSubmit} className="space-y-8 relative z-10">
+                                        {/* Terminal Header for Form */}
+                                        <div className="flex items-center justify-between border-b border-white/10 pb-4 mb-6">
+                                            <div className="flex items-center gap-2">
+                                                <span className="w-2 h-2 rounded-sm bg-purple-500 animate-pulse" />
+                                                <span className="text-xs font-mono text-gray-500 tracking-widest">CONTACT_FORM</span>
+                                            </div>
+                                        </div>
 
-                                    <div className="pt-4 flex justify-end">
-                                        <BlackHoleButton isSending={status === 'sending'} />
-                                    </div>
-                                </form>
+                                        <FloatingInput
+                                            label="your_name"
+                                            name="name"
+                                            type="text"
+                                            value={formState.name}
+                                            onChange={e => setFormState({ ...formState, name: e.target.value })}
+                                            isFocused={isFocused === 'name'}
+                                            onFocus={() => setIsFocused('name')}
+                                            onBlur={() => setIsFocused('')}
+                                            disabled={status === 'sending'}
+                                            delay={0}
+                                        />
+                                        <FloatingInput
+                                            label="your_email"
+                                            name="email"
+                                            type="email"
+                                            value={formState.email}
+                                            onChange={e => setFormState({ ...formState, email: e.target.value })}
+                                            isFocused={isFocused === 'email'}
+                                            onFocus={() => setIsFocused('email')}
+                                            onBlur={() => setIsFocused('')}
+                                            disabled={status === 'sending'}
+                                            delay={0.1}
+                                        />
+                                        <FloatingInput
+                                            label="your_message"
+                                            name="message"
+                                            type="textarea"
+                                            value={formState.message}
+                                            onChange={e => setFormState({ ...formState, message: e.target.value })}
+                                            isFocused={isFocused === 'message'}
+                                            onFocus={() => setIsFocused('message')}
+                                            onBlur={() => setIsFocused('')}
+                                            disabled={status === 'sending'}
+                                            delay={0.2}
+                                        />
 
-                                {/* Background noise/grain for the form card */}
-                                <div className="absolute inset-0 bg-noise opacity-10 pointer-events-none" />
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
+                                        <div className="pt-8 flex justify-end">
+                                            <CyberTransmitButton isSending={status === 'sending'} />
+                                        </div>
+                                    </form>
+
+                                    {/* Corner Accents */}
+                                    <div className="absolute top-0 left-0 w-4 h-4 border-t border-l border-white/30 pointer-events-none" />
+                                    <div className="absolute bottom-0 right-0 w-4 h-4 border-b border-r border-white/30 pointer-events-none" />
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
+                    </div>
+
                 </div>
-
-            </div>
             </section>
         </SectionBackground>
     );
@@ -169,26 +200,18 @@ const ContactItem = ({ icon, title, value, link }) => {
 
     const content = (
         <div className="flex items-center gap-6 flex-1 relative">
-            <div className="p-4 bg-white/5 rounded-2xl group-hover:bg-purple-500/20 transition-colors text-purple-400 border border-white/5 group-hover:border-purple-500/30">
+            <div className="p-3 bg-[#111] rounded-sm group-hover:bg-cyan-500/10 transition-colors text-cyan-400 border border-white/5 group-hover:border-cyan-500/30">
                 {icon}
             </div>
             <div>
-                <h4 className="text-gray-500 text-sm font-mono uppercase tracking-wider mb-1">{title}</h4>
-                <p className="text-xl font-semibold group-hover:text-purple-400 transition-colors">{value}</p>
+                <h4 className="text-gray-500 text-xs font-mono uppercase tracking-widest mb-1">{'//'} {title}</h4>
+                <p className="text-lg font-mono text-gray-200 group-hover:text-cyan-400 transition-colors tracking-tight">{value}</p>
             </div>
-
-            {/* Tooltip for Linkable Items */}
-            {link && (
-                <div className="absolute -top-10 left-10 px-3 py-1 bg-purple-500 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-lg">
-                    Click to Connect
-                    <div className="absolute bottom-[-4px] left-1/2 -translate-x-1/2 w-2 h-2 bg-purple-500 rotate-45" />
-                </div>
-            )}
         </div>
     );
 
     return (
-        <div className="flex items-center justify-between group p-2 rounded-2xl transition-all hover:bg-white/5 hover:pr-4">
+        <div className="flex items-center justify-between group p-3 rounded-sm transition-all bg-[#0a0a0a] border border-transparent hover:border-white/10 hover:shadow-lg">
             {link ? (
                 <a
                     href={link}
@@ -206,10 +229,10 @@ const ContactItem = ({ icon, title, value, link }) => {
 
             <button
                 onClick={handleCopy}
-                className="p-3 text-gray-500 hover:text-white hover:bg-white/10 rounded-xl transition-all opacity-0 group-hover:opacity-100 translate-x-4 group-hover:translate-x-0"
+                className="p-3 text-gray-500 hover:text-cyan-400 bg-transparent rounded-sm transition-all hover:bg-cyan-500/10"
                 title="Copy to clipboard"
             >
-                {copied ? <Check size={20} className="text-green-400" /> : <Copy size={20} />}
+                {copied ? <Check size={18} className="text-green-400" /> : <Copy size={18} />}
             </button>
         </div>
     );
@@ -218,13 +241,13 @@ const ContactItem = ({ icon, title, value, link }) => {
 const FloatingInput = ({ label, name, type, value, onChange, isFocused, onFocus, onBlur, disabled, delay }) => {
     return (
         <motion.div
-            animate={{ y: [0, -5, 0] }}
+            animate={{ y: [0, -2, 0] }}
             transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay }}
-            className="relative"
+            className="relative w-full"
         >
-            <div className="relative group">
-                <label className={`absolute left-0 transition-all duration-300 ${isFocused || value ? '-top-6 text-sm text-purple-400' : 'top-0 text-gray-500'}`}>
-                    {label}
+            <div className="relative group w-full flex flex-col pt-6">
+                <label className={`absolute left-0 transition-all duration-300 font-mono text-sm pointer-events-none flex items-center gap-2 ${isFocused || value ? 'top-0 text-cyan-400' : 'top-8 text-gray-500'}`}>
+                    <span className="text-purple-500">❯</span> {label}
                 </label>
 
                 {type === 'textarea' ? (
@@ -236,7 +259,7 @@ const FloatingInput = ({ label, name, type, value, onChange, isFocused, onFocus,
                         onFocus={onFocus}
                         onBlur={onBlur}
                         disabled={disabled}
-                        className="w-full bg-transparent border-b border-gray-700 py-2 text-white focus:outline-none focus:border-purple-500 transition-colors resize-none relative z-10"
+                        className="w-full bg-[#111] border border-white/10 p-3 text-white font-mono text-sm focus:outline-none focus:border-cyan-500/50 transition-colors resize-none relative z-10 rounded-sm"
                     />
                 ) : (
                     <input
@@ -247,94 +270,44 @@ const FloatingInput = ({ label, name, type, value, onChange, isFocused, onFocus,
                         onFocus={onFocus}
                         onBlur={onBlur}
                         disabled={disabled}
-                        className="w-full bg-transparent border-b border-gray-700 py-2 text-white focus:outline-none focus:border-purple-500 transition-colors relative z-10"
+                        className="w-full bg-[#111] border border-white/10 px-3 py-3 text-white font-mono text-sm focus:outline-none focus:border-cyan-500/50 transition-colors relative z-10 rounded-sm"
                     />
                 )}
-
-                {/* Active Line Animation */}
-                <div className={`absolute bottom-0 left-0 h-[1px] bg-purple-500 transition-all duration-300 ${isFocused ? 'w-full shadow-[0_0_10px_#a855f7]' : 'w-0'}`} />
-
-                {/* Particle Dust Effect on Focus */}
-                <AnimatePresence>
-                    {isFocused && <ParticleDust />}
-                </AnimatePresence>
             </div>
         </motion.div>
     );
 };
 
-const ParticleDust = () => {
-    // Generate random particles
-    const particles = Array.from({ length: 8 });
-
-    return (
-        <div className="absolute inset-0 pointer-events-none overflow-visible">
-            {particles.map((_, i) => (
-                <motion.div
-                    key={i}
-                    initial={{ opacity: 0, scale: 0, x: 0, y: 0 }}
-                    animate={{
-                        opacity: [0, 1, 0],
-                        scale: [0, Math.random() * 1.5, 0],
-                        x: (Math.random() - 0.5) * 100, // Random float direction
-                        y: (Math.random() - 0.5) * 60
-                    }}
-                    transition={{
-                        duration: 1 + Math.random(),
-                        repeat: Infinity,
-                        delay: Math.random() * 0.5
-                    }}
-                    className="absolute top-1/2 left-1/2 w-1 h-1 bg-purple-300 rounded-full blur-[1px]"
-                />
-            ))}
-        </div>
-    );
-};
-
-const BlackHoleButton = ({ isSending }) => {
+const CyberTransmitButton = ({ isSending }) => {
     return (
         <motion.button
             type="submit"
             disabled={isSending}
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.95 }}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
             className={`
-                relative w-16 h-16 rounded-full flex items-center justify-center 
-                transition-all duration-500 outline-none
-                ${isSending ? 'scale-[2] rotate-[360deg]' : 'hover:shadow-[0_0_30px_#9333ea]'}
+                relative px-8 py-3 rounded-sm flex items-center justify-center gap-3
+                transition-all duration-300 outline-none font-mono text-sm font-bold tracking-widest uppercase
+                ${isSending
+                    ? 'bg-purple-600/20 text-purple-400 border border-purple-500/50 cursor-not-allowed'
+                    : 'bg-white text-black hover:bg-cyan-400 hover:shadow-[0_0_20px_rgba(6,182,212,0.4)]'}
             `}
         >
             {isSending ? (
-                // Black Hole Active State
-                <div className="w-full h-full relative">
-                    <div className="absolute inset-0 bg-black rounded-full z-20" />
-                    {/* Swirling accretion disk */}
-                    <motion.div
-                        animate={{ rotate: 360 }}
-                        transition={{ duration: 0.5, repeat: Infinity, ease: "linear" }}
-                        className="absolute -inset-4 rounded-full bg-gradient-to-r from-purple-600 via-transparent to-cyan-500 blur-md opacity-80 z-10"
-                    />
-                    <div className="absolute inset-0 flex items-center justify-center z-30 text-white/50">
-                        <Loader2 className="animate-spin" size={20} />
-                    </div>
-                </div>
+                <>
+                    <Loader2 className="animate-spin" size={16} />
+                    <span>Sending...</span>
+                </>
             ) : (
-                // Normal "Portal" State
-                <div className="w-full h-full relative bg-black/40 backdrop-blur-md rounded-full border border-purple-500/50 flex items-center justify-center group overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-br from-purple-600/20 to-cyan-600/20 opacity-0 group-hover:opacity-100 transition-opacity" />
-                    <Send size={24} className="text-white relative z-10 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
-
-                    {/* Subtle idle swirls */}
-                    <div className="absolute -inset-8 bg-gradient-to-r from-transparent via-purple-500/10 to-transparent rotate-45 group-hover:animate-pulse" />
-                </div>
+                <>
+                    <span>Send Message</span>
+                    <Send size={16} className="relative z-10" />
+                </>
             )}
 
-            {/* Label, only visible when not interacting violently */}
-            {!isSending && (
-                <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 text-xs text-gray-500 font-mono tracking-widest whitespace-nowrap opacity-50">
-                    TRANSMIT
-                </span>
-            )}
+            {/* Edge Accents */}
+            <div className="absolute top-0 right-0 w-2 h-2 border-t-2 border-r-2 border-transparent group-hover:border-black pointer-events-none" />
+            <div className="absolute bottom-0 left-0 w-2 h-2 border-b-2 border-l-2 border-transparent group-hover:border-black pointer-events-none" />
         </motion.button>
     );
 };
