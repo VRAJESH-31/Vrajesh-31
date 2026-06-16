@@ -5,6 +5,7 @@ import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
 import { ArrowLeft, Loader2, ArrowUpRight, Github, ExternalLink } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { pageMorph } from '../lib/motion';
 
 // Helper to extract sections from raw markdown
 const Mermaid = ({ text }) => {
@@ -192,7 +193,11 @@ const ProjectDetails = () => {
     }
 
     return (
-        <div className="relative w-full min-h-screen bg-[#0a0a0a] text-gray-300 font-sans selection:bg-cyan-500/30">
+        <motion.div
+            initial={pageMorph.initial}
+            animate={pageMorph.animate}
+            exit={pageMorph.exit}
+            className="relative w-full min-h-screen bg-[#0a0a0a] text-gray-300 font-sans selection:bg-cyan-500/30">
             {/* Subtle Vercel-like grid background */}
             <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none" />
 
@@ -315,7 +320,7 @@ const ProjectDetails = () => {
                     </AnimatePresence>
                 </div>
             </div>
-        </div>
+        </motion.div>
     );
 };
 

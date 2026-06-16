@@ -24,30 +24,27 @@ const Skills = () => {
                         Explore my technological universe. Interactive visualization of my skills and their relationships.
                     </div>
 
-                    {/* Top Skills Marquee - Replaces the word 'Top Skills' with a cool scroller */}
+                    {/* Top Skills Marquee — minimal monochrome scroller (no neon / no glow) */}
                     <div className="w-full overflow-hidden flex flex-col items-center mb-12">
-                        <div className="text-sm uppercase tracking-[0.3em] text-white/40 mb-3 font-semibold">Top Skills</div>
-                        <div className="relative w-full max-w-4xl flex overflow-hidden group mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]">
+                        <div className="text-xs uppercase tracking-[0.3em] text-white/40 mb-4 font-medium">Top Skills</div>
+                        <div
+                            className="relative w-full max-w-4xl flex overflow-hidden"
+                            style={{ maskImage: 'linear-gradient(to right, transparent, black 12%, black 88%, transparent)', WebkitMaskImage: 'linear-gradient(to right, transparent, black 12%, black 88%, transparent)' }}
+                        >
                             <motion.div
-                                className="flex whitespace-nowrap gap-8 py-2 items-center text-xl md:text-2xl font-bold font-display"
+                                className="flex whitespace-nowrap gap-6 py-2 items-center text-lg md:text-xl font-medium tracking-tight"
                                 animate={{ x: ["0%", "-50%"] }}
-                                transition={{ ease: "linear", duration: 20, repeat: Infinity }}
+                                transition={{ ease: "linear", duration: 24, repeat: Infinity }}
                             >
                                 {/* Duplicated for seamless loop */}
                                 {[...Array(2)].map((_, i) => (
                                     <React.Fragment key={i}>
-                                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400 drop-shadow-[0_0_8px_rgba(59,130,246,0.5)]">MERN Stack</span>
-                                        <span className="text-white/20">•</span>
-                                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-teal-400 drop-shadow-[0_0_8px_rgba(45,212,191,0.5)]">React</span>
-                                        <span className="text-white/20">•</span>
-                                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-400 drop-shadow-[0_0_8px_rgba(16,185,129,0.5)]">Node.js</span>
-                                        <span className="text-white/20">•</span>
-                                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-400 drop-shadow-[0_0_8px_rgba(245,158,11,0.5)]">JavaScript</span>
-                                        <span className="text-white/20">•</span>
-                                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-gray-300 to-white drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]">GitHub</span>
-                                        <span className="text-white/20">•</span>
-                                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-400 to-pink-500 drop-shadow-[0_0_8px_rgba(236,72,153,0.8)]">Latest AI Tools</span>
-                                        <span className="text-white/20 mr-8">•</span>
+                                        {["MERN Stack", "React", "Node.js", "JavaScript", "GitHub", "Latest AI Tools"].map((skill, j) => (
+                                            <React.Fragment key={j}>
+                                                <span className="text-white/80">{skill}</span>
+                                                <span className="w-1 h-1 rounded-full bg-white/20" />
+                                            </React.Fragment>
+                                        ))}
                                     </React.Fragment>
                                 ))}
                             </motion.div>

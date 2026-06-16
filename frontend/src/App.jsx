@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
+import { AnimatePresence } from 'framer-motion';
 import Lenis from 'lenis';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -10,7 +11,8 @@ import ProjectDetails from './pages/ProjectDetails';
 import './index.css';
 
 function App() {
-  const { pathname } = useLocation();
+  const location = useLocation();
+  const { pathname } = location;
 
   // Scroll to top on route change
   useEffect(() => {
@@ -49,10 +51,12 @@ function App() {
       <Navbar />
 
       <main className="relative z-10 flex flex-col items-center w-full">
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/project/:id" element={<ProjectDetails />} />
-        </Routes>
+        <AnimatePresence mode="wait">
+          <Routes location={location} key={pathname}>
+            <Route path="/" element={<Home />} />
+            <Route path="/project/:id" element={<ProjectDetails />} />
+          </Routes>
+        </AnimatePresence>
         <Footer />
       </main>
     </div>

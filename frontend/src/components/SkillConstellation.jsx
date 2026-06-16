@@ -1,10 +1,13 @@
-import React, { useMemo, useState, useRef, useEffect } from 'react';
+import React, { useMemo, useState, useRef } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { OrbitControls, Text, Line, Html, Float, Stars, Sparkles } from '@react-three/drei';
+import { OrbitControls, Line, Html, Float, Stars, Sparkles } from '@react-three/drei';
 import * as THREE from 'three';
 import { motion, AnimatePresence } from 'framer-motion';
 
 // Expanded Skill Data
+// NOTE: the `position` values here are no longer used for the 3D layout (we now
+// generate clean, clustered "solar system" positions automatically in buildLayout()).
+// They are kept only so the data shape stays stable for the Normal/Grid view (SkillStatic).
 export const skillGroups = [
     {
         name: "Languages",
@@ -92,22 +95,60 @@ const crossConnections = [
     { start: "MongoDB", end: "Express.js" }
 ];
 
-// Helper to get all nodes flat map for easy lookup
-const getAllNodes = () => {
-    const nodes = [];
-    skillGroups.forEach(group => {
-        nodes.push({ ...group, isGroup: true });
-        group.children.forEach(child => nodes.push({ ...child, parent: group.name }));
+// ---------------------------------------------------------------------------
+// AUTO LAYOUT
+// Instead of hand-placed (and visually confusing) coordinates, we arrange every
+// category as its own little "solar system": a central core with its skills
+// orbiting in a tidy ring around it. This makes the grouping obvious at a glance
+// while keeping the genuine 3D feel.
+// ---------------------------------------------------------------------------
+const CORE_RADIUS = 7;   // distance of each category core from the center
+const RING_RADIUS = 2.6; // distance of skills from their own category core
+
+const buildLayout = () => {
+    return skillGroups.map((group, i) => {
+        const angle = (i / skillGroups.length) * Math.PI * 2;
+        // Gentle up/down zig-zag so it reads as a 3D cluster (and never collapses
+        // to a flat line while auto-rotating around the vertical axis).
+        const coreY = i % 2 === 0 ? 1.8 : -1.8;
+        const core = new THREE.Vector3(
+            Math.cos(angle) * CORE_RADIUS,
+            coreY,
+            Math.sin(angle) * CORE_RADIUS
+        );
+
+        // Build an upright ring plane around the core so its skills "stand" around it.
+        const radial = core.clone().normalize();
+        let basisA = new THREE.Vector3().crossVectors(new THREE.Vector3(0, 1, 0), radial);
+        if (basisA.lengthSq() < 1e-4) basisA = new THREE.Vector3(1, 0, 0);
+        basisA.normalize();
+        const basisB = new THREE.Vector3().crossVectors(radial, basisA).normalize();
+
+        const n = group.children.length;
+        const ringR = RING_RADIUS + (n > 4 ? 0.7 : 0); // give crowded groups more room
+
+        const children = group.children.map((child, j) => {
+            const t = (j / n) * Math.PI * 2;
+            const pos = core.clone()
+                .add(basisA.clone().multiplyScalar(Math.cos(t) * ringR))
+                .add(basisB.clone().multiplyScalar(Math.sin(t) * ringR));
+            return { ...child, position: [pos.x, pos.y, pos.z] };
+        });
+
+        return { ...group, position: [core.x, core.y, core.z], isGroup: true, children };
     });
-    return nodes;
 };
 
-// Helper for lines
+// Computed once, shared by the 3D scene AND the sidebar / camera focus so a
+// sidebar click always flies to the correct (laid-out) position.
+const SKILL_SYSTEMS = buildLayout();
+
+// Helper for lines (works off the laid-out systems)
 const getConnections = (groups) => {
     const connections = [];
     const nodeMap = new Map();
 
-    // 1. Group to Children connections
+    // 1. Core -> skill "spokes" (these visually tie each group together)
     groups.forEach(group => {
         const start = new THREE.Vector3(...group.position);
         nodeMap.set(group.name, start);
@@ -127,7 +168,7 @@ const getConnections = (groups) => {
         });
     });
 
-    // 2. Cross connections
+    // 2. Cross-category links (shown only when something is focused, to avoid clutter)
     crossConnections.forEach(conn => {
         const start = nodeMap.get(conn.start);
         const end = nodeMap.get(conn.end);
@@ -145,7 +186,7 @@ const getConnections = (groups) => {
     return connections;
 };
 
-const Node = ({ position, name, color, size = 1, desc, onClick, onHover, isSelected, isHovered, isRelated, isFocusMode }) => {
+const Node = ({ position, name, color, size = 1, desc, isGroup, onClick, onHover, isSelected, isHovered, isRelated, isFocusMode }) => {
     const ref = useRef();
     const innerRef = useRef();
     const glowRef = useRef();
@@ -177,11 +218,25 @@ const Node = ({ position, name, color, size = 1, desc, onClick, onHover, isSelec
     });
 
     const scale = isSelected ? 1.8 : (isHovered ? 1.4 : 1);
+    const active = isSelected || isHovered;
 
-    // Calculate opacity based on focus mode
-    const baseOpacity = isFocusMode ? 0.05 : 0.6;
-    const activeOpacity = 1;
-    const currentOpacity = (isSelected || isHovered || (isFocusMode && isRelated)) ? activeOpacity : baseOpacity;
+    // Opacity of the orb. Category cores stay a little brighter than skills so the
+    // "hub" reads as the important node. Focus mode dims everything unrelated.
+    const baseOpacity = isFocusMode ? 0.08 : (isGroup ? 0.85 : 0.6);
+    const currentOpacity = (active || (isFocusMode && isRelated)) ? 1 : baseOpacity;
+
+    // Label readability. The big change for non-tech viewers: labels are READABLE
+    // by default (no blur-to-read), and category names are always clearly shown.
+    let labelClass;
+    if (active || (isFocusMode && isRelated)) {
+        labelClass = 'opacity-100 scale-110';
+    } else if (isFocusMode) {
+        labelClass = 'opacity-10 blur-sm scale-90';
+    } else if (isGroup) {
+        labelClass = 'opacity-100 scale-100';
+    } else {
+        labelClass = 'opacity-80 scale-95';
+    }
 
     return (
         <group position={position}>
@@ -192,7 +247,7 @@ const Node = ({ position, name, color, size = 1, desc, onClick, onHover, isSelec
                     <meshBasicMaterial
                         color={color}
                         transparent
-                        opacity={isSelected || isHovered ? 0.15 : 0.05}
+                        opacity={active ? 0.15 : (isGroup ? 0.08 : 0.05)}
                     />
                 </mesh>
 
@@ -220,7 +275,7 @@ const Node = ({ position, name, color, size = 1, desc, onClick, onHover, isSelec
                     <meshPhysicalMaterial
                         color={color}
                         emissive={color}
-                        emissiveIntensity={isSelected || isHovered ? 2.5 : (isRelated ? 1.2 : 0.3)}
+                        emissiveIntensity={active ? 2.5 : (isRelated ? 1.2 : (isGroup ? 0.6 : 0.3))}
                         roughness={0.1}
                         metalness={0.9}
                         transmission={0.6}
@@ -236,7 +291,7 @@ const Node = ({ position, name, color, size = 1, desc, onClick, onHover, isSelec
                     <mesh ref={innerRef} scale={[0.5, 0.5, 0.5]}>
                         <octahedronGeometry args={[size * 0.2, 0]} />
                         <meshStandardMaterial
-                            color={isSelected || isHovered ? '#ffffff' : color}
+                            color={active ? '#ffffff' : color}
                             emissive={color}
                             emissiveIntensity={3}
                             roughness={0}
@@ -244,6 +299,14 @@ const Node = ({ position, name, color, size = 1, desc, onClick, onHover, isSelec
                         />
                     </mesh>
                 </mesh>
+
+                {/* Faint halo ring around a category core, to read as a "hub" */}
+                {isGroup && (
+                    <mesh rotation={[Math.PI / 2, 0, 0]} scale={[scale, scale, scale]}>
+                        <torusGeometry args={[size * 0.7, 0.015, 12, 64]} />
+                        <meshBasicMaterial color={color} transparent opacity={isFocusMode && !isRelated ? 0.05 : 0.5} />
+                    </mesh>
+                )}
 
                 {/* Orbiting Particles */}
                 <group ref={particlesRef}>
@@ -259,9 +322,9 @@ const Node = ({ position, name, color, size = 1, desc, onClick, onHover, isSelec
                         >
                             <sphereGeometry args={[1, 8, 8]} />
                             <meshBasicMaterial
-                                color={isSelected || isHovered ? '#ffffff' : color}
+                                color={active ? '#ffffff' : color}
                                 transparent
-                                opacity={isSelected || isHovered ? 0.9 : 0.4}
+                                opacity={active ? 0.9 : 0.4}
                             />
                         </mesh>
                     ))}
@@ -269,13 +332,21 @@ const Node = ({ position, name, color, size = 1, desc, onClick, onHover, isSelec
 
 
                 {/* Label Container */}
-                <Html distanceFactor={12} style={{ pointerEvents: 'none' }} position={[0, -1.2, 0]}>
-                    <div className={`flex flex-col items-center transition-all duration-500 ${(isSelected || isHovered || (isFocusMode && isRelated)) ? 'opacity-100 scale-110' : (isFocusMode ? 'opacity-10 blur-sm scale-75' : 'opacity-40 scale-90')}`}>
-                        <div className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap backdrop-blur-md border shadow-lg ${isSelected ? 'bg-gradient-to-r from-white/90 to-white/80 text-black border-white shadow-[0_0_20px_rgba(255,255,255,0.6)]' : 'bg-gradient-to-r from-white/20 to-white/10 text-white/90 border-white/30 shadow-[0_0_10px_rgba(255,255,255,0.2)]'}`}>
+                <Html distanceFactor={12} style={{ pointerEvents: 'none' }} position={[0, isGroup ? -1.4 : -1.2, 0]}>
+                    <div className={`flex flex-col items-center transition-all duration-500 ${labelClass}`}>
+                        <div className={`rounded-xl whitespace-nowrap backdrop-blur-md border shadow-lg
+                            ${isGroup ? 'px-4 py-2 text-sm font-extrabold uppercase tracking-wide' : 'px-3 py-1.5 text-xs font-bold'}
+                            ${isSelected
+                                ? 'bg-white text-black border-white shadow-[0_0_20px_rgba(255,255,255,0.6)]'
+                                : isGroup
+                                    ? 'bg-black/40 text-white border-white/40 shadow-[0_0_14px_rgba(255,255,255,0.15)]'
+                                    : 'bg-white/15 text-white/90 border-white/25 shadow-[0_0_8px_rgba(255,255,255,0.15)]'}`}
+                            style={isGroup && !isSelected ? { color: color, borderColor: color } : undefined}
+                        >
                             {name}
                         </div>
-                        {(isSelected || isHovered) && desc && (
-                            <div className="mt-2 px-3 py-1 rounded-lg bg-black/80 backdrop-blur-md border border-white/20 text-xs text-white/80 max-w-xs text-center">
+                        {active && desc && (
+                            <div className="mt-2 px-3 py-1 rounded-lg bg-black/85 backdrop-blur-md border border-white/20 text-xs text-white/90 max-w-xs text-center">
                                 {desc}
                             </div>
                         )}
@@ -289,11 +360,12 @@ const Node = ({ position, name, color, size = 1, desc, onClick, onHover, isSelec
 const Connection = ({ start, end, color, active, type, isFocusMode }) => {
     const ref = useRef();
     const isCross = type === 'cross';
-    const opacity = active ? 0.8 : (isFocusMode ? 0 : 0.15);
+    // Cross-links are hidden until you focus something (they were the noisiest part).
+    // Hierarchy spokes stay faintly visible so the grouping is always readable.
+    const opacity = active ? 0.8 : (isCross ? 0 : (isFocusMode ? 0 : 0.18));
 
     useFrame((state) => {
         if (ref.current && active) {
-            // Animated flow effect for active connections
             ref.current.material.dashOffset = -state.clock.elapsedTime * 0.5;
         }
     });
@@ -302,7 +374,7 @@ const Connection = ({ start, end, color, active, type, isFocusMode }) => {
         <Line
             ref={ref}
             points={[start, end]}
-            color={active ? color : (isCross ? "#666" : "#444")}
+            color={active ? color : (isCross ? "#666" : "#555")}
             lineWidth={active ? (isCross ? 2 : 3) : (isCross ? 0.8 : 1.5)}
             transparent
             opacity={opacity}
@@ -319,15 +391,11 @@ const CameraController = ({ selectedNode }) => {
 
     useFrame(() => {
         if (selectedNode && controls) {
-            // Smoothly move camera towards but not ONTO the node
             const targetPos = new THREE.Vector3(...selectedNode.position);
-            // Offset logic: Keep z distance, but center the x/y
-            const offset = new THREE.Vector3(0, 0, 10); // Slightly further back for better view
+            const offset = new THREE.Vector3(0, 0, 10);
             const desiredCamPos = targetPos.clone().add(offset);
 
-            // Lerp camera position
             camera.position.lerp(desiredCamPos, 0.05);
-            // Lerp controls target to node center
             controls.target.lerp(targetPos, 0.05);
             controls.update();
         }
@@ -337,15 +405,15 @@ const CameraController = ({ selectedNode }) => {
 
 const Scene = ({ onNodeSelect, selectedNode, isFocusMode }) => {
     const [hoveredNode, setHoveredNode] = useState(null);
-    const connections = useMemo(() => getConnections(skillGroups), []);
+    const connections = useMemo(() => getConnections(SKILL_SYSTEMS), []);
 
     return (
         <>
             <OrbitControls
                 enableZoom={true}
                 enablePan={true}
-                minDistance={5}
-                maxDistance={30}
+                minDistance={6}
+                maxDistance={34}
                 autoRotate={!selectedNode && !hoveredNode}
                 autoRotateSpeed={0.5}
                 dampingFactor={0.05}
@@ -364,11 +432,12 @@ const Scene = ({ onNodeSelect, selectedNode, isFocusMode }) => {
             <Sparkles count={100} scale={25} size={2} speed={0.3} opacity={0.4} color="#7c3aed" />
             <Sparkles count={80} scale={20} size={2} speed={0.4} opacity={0.3} color="#06b6d4" />
 
-            {skillGroups.map((group, i) => (
+            {SKILL_SYSTEMS.map((group, i) => (
                 <group key={i}>
                     {/* Core Node */}
                     <Node
                         {...group}
+                        isGroup
                         isSelected={selectedNode?.name === group.name}
                         isHovered={hoveredNode?.name === group.name}
                         isRelated={
@@ -382,11 +451,10 @@ const Scene = ({ onNodeSelect, selectedNode, isFocusMode }) => {
 
                     {/* Child Nodes */}
                     {group.children.map((child, j) => {
-                        // Helper to check relationship against a target node
                         const checkRel = (target) => {
                             if (!target) return false;
                             const isParent = target.name === group.name;
-                            const isSibling = target.parent === group.name || group.children.some(c => c.name === target.name); // Simpler: if target is in same group
+                            const isSibling = target.parent === group.name || group.children.some(c => c.name === target.name);
                             const isCross = crossConnections.some(c =>
                                 (c.start === target.name && c.end === child.name) ||
                                 (c.end === target.name && c.start === child.name)
@@ -405,7 +473,7 @@ const Scene = ({ onNodeSelect, selectedNode, isFocusMode }) => {
                                     (selectedNode && (selectedNode.name === child.name || checkRel(selectedNode)))
                                 }
                                 isFocusMode={isFocusMode}
-                                onClick={() => onNodeSelect(child)}
+                                onClick={() => onNodeSelect({ ...child, parent: group.name })}
                                 onHover={(status) => setHoveredNode(status ? child : null)}
                             />
                         );
@@ -434,63 +502,46 @@ const Scene = ({ onNodeSelect, selectedNode, isFocusMode }) => {
 const SkillConstellation = () => {
     const [selectedNode, setSelectedNode] = useState(null);
     const [isFocusMode, setIsFocusMode] = useState(false);
-    const focusTimerRef = useRef(null);
 
     const handleNodeSelect = (node) => {
         setSelectedNode(node);
         setIsFocusMode(true);
-
-        // Reset any existing timer
-        if (focusTimerRef.current) clearTimeout(focusTimerRef.current);
-
-        // Auto-clear focus after 10 seconds
-        focusTimerRef.current = setTimeout(() => {
-            setIsFocusMode(false);
-            // Optionally, we could also clear selectedNode if we want full reset:
-            // setSelectedNode(null); 
-        }, 10000); // 10s
     };
 
     const handleReset = () => {
         setSelectedNode(null);
         setIsFocusMode(false);
-        if (focusTimerRef.current) clearTimeout(focusTimerRef.current);
     };
 
-    // Find group by name helper
     const handleCategoryClick = (categoryName) => {
-        const group = skillGroups.find(g => g.name === categoryName);
-        if (group) {
-            handleNodeSelect(group);
-        }
+        const group = SKILL_SYSTEMS.find(g => g.name === categoryName);
+        if (group) handleNodeSelect(group);
     };
 
-    useEffect(() => {
-        return () => {
-            if (focusTimerRef.current) clearTimeout(focusTimerRef.current);
-        };
-    }, []);
+    // Friendly info for the selection card
+    const selectedMeta = useMemo(() => {
+        if (!selectedNode) return null;
+        if (selectedNode.isGroup) {
+            return { kind: 'Category', sub: `${selectedNode.children?.length || 0} skills` };
+        }
+        return { kind: 'Skill', sub: selectedNode.parent ? `in ${selectedNode.parent}` : '' };
+    }, [selectedNode]);
 
     return (
         <div className="w-full h-[600px] relative">
-            <Canvas camera={{ position: [0, 0, 20], fov: 50 }} dpr={[1, 2]}>
+            <Canvas
+                camera={{ position: [0, 0, 22], fov: 50 }}
+                dpr={[1, 2]}
+                onPointerMissed={handleReset} // click empty space to go back
+            >
                 <Scene onNodeSelect={handleNodeSelect} selectedNode={selectedNode} isFocusMode={isFocusMode} />
             </Canvas>
 
-            {/* Reset Button */}
-            {selectedNode && (
-                <button
-                    onClick={handleReset}
-                    className="absolute bottom-8 right-8 px-4 py-2 bg-white/10 text-white rounded-full backdrop-blur-md border border-white/20 text-sm hover:bg-white/20 transition-all z-10"
-                >
-                    Reset View
-                </button>
-            )}
-
-            {/* Interactive Sidebar / Legend */}
-            <div className="absolute top-8 left-8 flex flex-col gap-3">
-                <h3 className="text-white/50 text-xs font-bold uppercase tracking-widest mb-1">Focus View</h3>
-                {skillGroups.map((group) => (
+            {/* Categories Sidebar */}
+            <div className="absolute top-6 left-6 flex flex-col gap-2">
+                <h3 className="text-white/60 text-xs font-bold uppercase tracking-widest mb-1">Categories</h3>
+                <p className="text-white/30 text-[10px] mb-1 -mt-1">Click one to explore</p>
+                {SKILL_SYSTEMS.map((group) => (
                     <button
                         key={group.name}
                         onClick={() => handleCategoryClick(group.name)}
@@ -508,9 +559,64 @@ const SkillConstellation = () => {
                 ))}
             </div>
 
-            <div className="absolute bottom-4 left-4 text-white/30 text-xs pointer-events-none select-none">
-                Interact with the constellation • Click sidebar to focus
-            </div>
+            {/* Bottom-center: friendly hint OR the selected-item info card */}
+            <AnimatePresence mode="wait">
+                {selectedNode ? (
+                    <motion.div
+                        key="info"
+                        initial={{ opacity: 0, y: 16 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 16 }}
+                        className="absolute bottom-6 left-1/2 -translate-x-1/2 w-[min(90%,420px)] z-10"
+                    >
+                        <div className="rounded-2xl bg-black/70 backdrop-blur-xl border border-white/15 px-5 py-4 shadow-2xl">
+                            <div className="flex items-center gap-3">
+                                <span className="w-3 h-3 rounded-full shadow-[0_0_10px_currentColor] shrink-0" style={{ backgroundColor: selectedNode.color, color: selectedNode.color }} />
+                                <div className="min-w-0">
+                                    <div className="text-white font-bold text-base leading-tight truncate">{selectedNode.name}</div>
+                                    <div className="text-white/40 text-[11px] uppercase tracking-wider">{selectedMeta?.kind} · {selectedMeta?.sub}</div>
+                                </div>
+                            </div>
+                            {selectedNode.desc && (
+                                <p className="text-white/70 text-sm mt-2">{selectedNode.desc}</p>
+                            )}
+                            {selectedNode.isGroup && selectedNode.children && (
+                                <div className="flex flex-wrap gap-1.5 mt-3">
+                                    {selectedNode.children.map((c) => (
+                                        <span key={c.name} className="px-2 py-0.5 rounded-md bg-white/10 border border-white/10 text-white/80 text-[11px]">{c.name}</span>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    </motion.div>
+                ) : (
+                    <motion.div
+                        key="hint"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 pointer-events-none"
+                    >
+                        <div className="px-4 py-2 rounded-full bg-black/50 backdrop-blur-md border border-white/15 text-white/70 text-xs flex items-center gap-2 whitespace-nowrap">
+                            <span>🖱️ Drag to rotate</span>
+                            <span className="text-white/20">•</span>
+                            <span>Scroll to zoom</span>
+                            <span className="text-white/20">•</span>
+                            <span className="text-white">Click any orb to explore</span>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            {/* Reset Button */}
+            {selectedNode && (
+                <button
+                    onClick={handleReset}
+                    className="absolute top-6 right-6 px-4 py-2 bg-white/10 text-white rounded-full backdrop-blur-md border border-white/20 text-sm hover:bg-white/20 transition-all z-10"
+                >
+                    ← Back to all
+                </button>
+            )}
         </div>
     );
 };
