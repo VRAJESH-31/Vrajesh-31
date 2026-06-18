@@ -93,6 +93,7 @@ const Hero = () => {
                                     smooth={true}
                                     duration={800}
                                     className="group px-6 sm:px-8 py-3 sm:py-4 bg-white text-black font-bold text-sm sm:text-base hover:bg-cyan-50 transition-all flex items-center gap-2 cursor-pointer shadow-[0_0_20px_rgba(255,255,255,0.1)] hover:shadow-[0_0_30px_rgba(6,182,212,0.4)] hover:text-cyan-900 rounded-sm"
+                                    data-guide="Scroll straight down to the contact section to send me a message."
                                 >
                                     Let's Connect
                                     <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform" />
@@ -102,6 +103,7 @@ const Hero = () => {
                                     href="/Vraj.pdf"
                                     download="Vraj.pdf"
                                     className="group px-6 sm:px-8 py-3 sm:py-4 bg-transparent border border-white/20 text-white font-bold text-sm sm:text-base hover:bg-white/5 transition-all flex items-center gap-2 cursor-pointer backdrop-blur-sm rounded-sm font-mono hover:border-purple-400/50"
+                                    data-guide="Click to download my complete B.Tech Computer Science resume (PDF)."
                                 >
                                     Download Resume
                                     <Download className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-y-1 transition-transform" />
@@ -118,6 +120,7 @@ const Hero = () => {
                                             rel="noopener noreferrer"
                                             className="block p-2 text-gray-400 hover:text-cyan-400 border border-transparent hover:border-cyan-500/30 hover:bg-cyan-500/10 rounded-sm transition-all duration-300"
                                             aria-label={link.label}
+                                            data-guide={`Navigate to my official ${link.label} profile.`}
                                         >
                                             {link.icon}
                                         </a>

@@ -2,6 +2,8 @@ import { useEffect } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import Lenis from 'lenis';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Background3D from './components/Background3D';
@@ -20,6 +22,8 @@ function App() {
   }, [pathname]);
 
   useEffect(() => {
+    gsap.registerPlugin(ScrollTrigger);
+
     const lenis = new Lenis({
       duration: 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
@@ -31,14 +35,16 @@ function App() {
       touchMultiplier: 2,
     });
 
-    function raf(time) {
-      lenis.raf(time);
-      requestAnimationFrame(raf);
-    }
-
-    requestAnimationFrame(raf);
+    // Keep ScrollTrigger (used by the pinned Projects stack) in sync with
+    // Lenis's smooth scroll, and drive Lenis from GSAP's ticker so scrub
+    // animations update on every frame instead of freezing.
+    lenis.on('scroll', ScrollTrigger.update);
+    const ticker = (time) => lenis.raf(time * 1000);
+    gsap.ticker.add(ticker);
+    gsap.ticker.lagSmoothing(0);
 
     return () => {
+      gsap.ticker.remove(ticker);
       lenis.destroy();
     };
   }, []);

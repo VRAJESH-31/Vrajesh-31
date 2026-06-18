@@ -1,10 +1,11 @@
-import { motion, useInView } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useRef, useMemo } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Float, Center, PerspectiveCamera, OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
 import { Calendar, MapPin, Briefcase, Award, Terminal } from 'lucide-react';
 import MaskReveal from '../components/MaskReveal';
+import { EASE } from '../lib/motion';
 
 // 3D Geometric Wireframe Component (Replaces playful Orbs)
 function GeometricWireframe() {
@@ -35,9 +36,6 @@ function GeometricWireframe() {
 }
 
 const Experience = () => {
-    const ref = useRef(null);
-    const isInView = useInView(ref, { once: false, margin: "-100px" });
-
     const experiences = [
         {
             title: "Genda Phool",
@@ -91,30 +89,29 @@ const Experience = () => {
                 </Canvas>
             </div>
 
-            <div ref={ref} className="max-w-7xl w-full mx-auto relative z-10 pt-10">
+            <div className="max-w-6xl w-full mx-auto relative z-10 pt-10">
                 {/* Section Header */}
-                <motion.div
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8 }}
-                    className="text-center mb-20"
-                >
-                    <div className="inline-flex flex-col items-center">
-                        <h2 className="text-4xl md:text-6xl font-display font-bold mb-2">
-                            <MaskReveal className="text-center">
-                                <span className="inline-flex items-center justify-center gap-3">
-                                    <span className="text-cyan-500 font-mono text-3xl font-normal">{'<'}</span>
-                                    Work <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-cyan-400">Experience</span>
-                                    <span className="text-cyan-500 font-mono text-3xl font-normal">{'>'}</span>
-                                </span>
-                            </MaskReveal>
-                        </h2>
-                        <div className="h-[2px] w-full max-w-[200px] bg-gradient-to-r from-purple-500 to-cyan-500 mt-2" />
-                    </div>
+                <div className="mb-14">
+                    <h2 className="text-4xl md:text-6xl font-display font-bold mb-3">
+                        <MaskReveal>
+                            <span className="flex items-center gap-3">
+                                <span className="text-cyan-500 font-mono text-3xl font-normal">{'<'}</span>
+                                Work <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-cyan-400">Experience</span>
+                                <span className="text-cyan-500 font-mono text-3xl font-normal">{'>'}</span>
+                            </span>
+                        </MaskReveal>
+                    </h2>
+                    <motion.div
+                        initial={{ scaleX: 0 }}
+                        whileInView={{ scaleX: 1 }}
+                        viewport={{ once: true, amount: 0.1 }}
+                        transition={{ duration: 0.7, ease: EASE, delay: 0.3 }}
+                        className="h-[2px] w-36 origin-left bg-gradient-to-r from-purple-500 to-cyan-500"
+                    />
                     <p className="text-gray-500 font-mono text-sm mt-6 uppercase tracking-widest">
                         Career Journey // Professional Experience
                     </p>
-                </motion.div>
+                </div>
 
                 {/* Experience Cards */}
                 <div className="space-y-12">
@@ -122,9 +119,10 @@ const Experience = () => {
                         <motion.div
                             key={index}
                             initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
-                            animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
-                            transition={{ duration: 0.8, delay: index * 0.2 }}
-                            className="relative max-w-4xl mx-auto"
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true, amount: 0.1 }}
+                            transition={{ duration: 0.8, ease: EASE }}
+                            className="relative max-w-4xl mr-auto"
                         >
                             <div className="flex flex-col md:flex-row gap-6 items-start">
                                 {/* Timeline Node (Sharper) */}

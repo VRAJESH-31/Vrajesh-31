@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useRef } from 'react';
+import React, { useMemo, useState, useRef, useEffect } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { OrbitControls, Line, Html, Float, Stars, Sparkles } from '@react-three/drei';
 import * as THREE from 'three';
@@ -386,24 +386,52 @@ const Connection = ({ start, end, color, active, type, isFocusMode }) => {
     );
 };
 
-const CameraController = ({ selectedNode }) => {
+const CameraController = ({ selectedNode, lerpActive }) => {
     const { camera, controls } = useThree();
 
     useFrame(() => {
-        if (selectedNode && controls) {
-            const targetPos = new THREE.Vector3(...selectedNode.position);
-            const offset = new THREE.Vector3(0, 0, 10);
-            const desiredCamPos = targetPos.clone().add(offset);
-
-            camera.position.lerp(desiredCamPos, 0.05);
-            controls.target.lerp(targetPos, 0.05);
+        if (controls && lerpActive.current) {
+            const targetPos = selectedNode 
+                ? new THREE.Vector3(...selectedNode.position)
+                : new THREE.Vector3(0, 0, 0);
+            
+            // Lerp target position (where camera looks)
+            controls.target.lerp(targetPos, 0.08);
+            
+            // Lerp camera position directly in front of the target (along the radial vector of the category)
+            const targetDist = selectedNode ? (selectedNode.isGroup ? 10 : 7.5) : 22;
+            let radial = new THREE.Vector3(0, 0, 1);
+            if (selectedNode) {
+                const groupName = selectedNode.isGroup ? selectedNode.name : selectedNode.parent;
+                const group = SKILL_SYSTEMS.find(g => g.name === groupName);
+                if (group) {
+                    radial.set(...group.position);
+                } else {
+                    radial.set(...selectedNode.position);
+                }
+                if (radial.lengthSq() > 1e-4) {
+                    radial.normalize();
+                } else {
+                    radial.set(0, 0, 1);
+                }
+            }
+            const desiredCamPos = targetPos.clone().add(radial.clone().multiplyScalar(targetDist));
+            
+            camera.position.lerp(desiredCamPos, 0.08);
+            
+            // Check if we are close enough to stop lerping
+            if (camera.position.distanceTo(desiredCamPos) < 0.02 && controls.target.distanceTo(targetPos) < 0.02) {
+                camera.position.copy(desiredCamPos);
+                controls.target.copy(targetPos);
+                lerpActive.current = false;
+            }
             controls.update();
         }
     });
     return null;
-}
+};
 
-const Scene = ({ onNodeSelect, selectedNode, isFocusMode }) => {
+const Scene = ({ onNodeSelect, selectedNode, isFocusMode, lerpActive, onUserInteraction }) => {
     const [hoveredNode, setHoveredNode] = useState(null);
     const connections = useMemo(() => getConnections(SKILL_SYSTEMS), []);
 
@@ -411,15 +439,23 @@ const Scene = ({ onNodeSelect, selectedNode, isFocusMode }) => {
         <>
             <OrbitControls
                 enableZoom={true}
+                enableRotate={true}
                 enablePan={true}
                 minDistance={6}
                 maxDistance={34}
-                autoRotate={!selectedNode && !hoveredNode}
-                autoRotateSpeed={0.5}
+                autoRotate={!selectedNode && !lerpActive.current} // Auto rotate overview mode when idle
+                autoRotateSpeed={0.45}
                 dampingFactor={0.05}
+                onStart={onUserInteraction} // Stop lerping when manual drag starts
+                onChange={() => {
+                    // Update last interaction time when user rotates manually
+                    if (!lerpActive.current) {
+                        onUserInteraction();
+                    }
+                }}
             />
 
-            <CameraController selectedNode={selectedNode} />
+            <CameraController selectedNode={selectedNode} lerpActive={lerpActive} />
 
             <ambientLight intensity={0.3} />
             <pointLight position={[15, 15, 15]} intensity={1.2} color="#ffffff" />
@@ -502,21 +538,71 @@ const Scene = ({ onNodeSelect, selectedNode, isFocusMode }) => {
 const SkillConstellation = () => {
     const [selectedNode, setSelectedNode] = useState(null);
     const [isFocusMode, setIsFocusMode] = useState(false);
+    
+    const lerpActive = useRef(true);
+    const lastInteractionTime = useRef(Date.now());
+
+    // When selectedNode is updated (clicked or auto-changed), start the flight transition
+    useEffect(() => {
+        lerpActive.current = true;
+        lastInteractionTime.current = Date.now();
+    }, [selectedNode]);
+
+    const handleUserInteraction = () => {
+        lastInteractionTime.current = Date.now();
+        lerpActive.current = false; // Stop the camera auto-fly immediately on interaction
+    };
 
     const handleNodeSelect = (node) => {
         setSelectedNode(node);
         setIsFocusMode(true);
+        lerpActive.current = true;
+        lastInteractionTime.current = Date.now();
     };
 
     const handleReset = () => {
         setSelectedNode(null);
         setIsFocusMode(false);
+        lerpActive.current = true;
+        lastInteractionTime.current = Date.now();
     };
 
     const handleCategoryClick = (categoryName) => {
         const group = SKILL_SYSTEMS.find(g => g.name === categoryName);
         if (group) handleNodeSelect(group);
     };
+
+    // Auto-rotation sequence on mount: Languages -> 1.5s -> Frontend
+    useEffect(() => {
+        // Start from Languages
+        const languagesGroup = SKILL_SYSTEMS.find(g => g.name === "Languages");
+        setSelectedNode(languagesGroup);
+        setIsFocusMode(true);
+
+        const timer = setTimeout(() => {
+            // Only transition automatically if user hasn't interacted yet
+            const hasInteracted = Date.now() - lastInteractionTime.current > 1300;
+            if (!hasInteracted && lerpActive.current) {
+                const frontendGroup = SKILL_SYSTEMS.find(g => g.name === "Frontend");
+                setSelectedNode(frontendGroup);
+                setIsFocusMode(true);
+            }
+        }, 1500);
+
+        return () => clearTimeout(timer);
+    }, []);
+
+    // 10s Inactivity Timer: return the camera straight in front of the active category
+    useEffect(() => {
+        const interval = setInterval(() => {
+            const idleTime = Date.now() - lastInteractionTime.current;
+            if (idleTime > 10000 && !lerpActive.current) { 
+                // 10 seconds of inactivity: center back straight in front of category
+                lerpActive.current = true;
+            }
+        }, 1000);
+        return () => clearInterval(interval);
+    }, []);
 
     // Friendly info for the selection card
     const selectedMeta = useMemo(() => {
@@ -528,13 +614,23 @@ const SkillConstellation = () => {
     }, [selectedNode]);
 
     return (
-        <div className="w-full h-[600px] relative">
+        <div 
+            className="w-full h-[600px] relative select-none"
+            onPointerDown={handleUserInteraction}
+            onWheel={handleUserInteraction}
+        >
             <Canvas
                 camera={{ position: [0, 0, 22], fov: 50 }}
                 dpr={[1, 2]}
                 onPointerMissed={handleReset} // click empty space to go back
             >
-                <Scene onNodeSelect={handleNodeSelect} selectedNode={selectedNode} isFocusMode={isFocusMode} />
+                <Scene 
+                    onNodeSelect={handleNodeSelect} 
+                    selectedNode={selectedNode} 
+                    isFocusMode={isFocusMode} 
+                    lerpActive={lerpActive}
+                    onUserInteraction={handleUserInteraction}
+                />
             </Canvas>
 
             {/* Categories Sidebar */}

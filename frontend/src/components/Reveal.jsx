@@ -35,7 +35,7 @@ const Reveal = ({
             className={className}
             initial={hidden}
             whileInView={shown}
-            viewport={{ once, margin: '-80px', amount }}
+            viewport={{ once, amount }}
             transition={{ duration, ease: EASE, delay }}
             {...rest}
         >

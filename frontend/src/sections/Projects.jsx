@@ -1,10 +1,9 @@
 import { useLayoutEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowUpRight, Github, Play, Cpu, GitBranch, Terminal as TerminalIcon } from "lucide-react";
+import { ArrowUpRight, Github, Cpu, GitBranch, Terminal as TerminalIcon } from "lucide-react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import SectionBackground from '../components/SectionBackground';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -143,26 +142,35 @@ function ProjectCard({ project, index }) {
     const projectId = project.id || project.title.toLowerCase().replace(/\s+/g, '-');
 
     return (
-        <article
-            className={`
-                relative flex-shrink-0
-                w-full md:w-[90vw] lg:w-[80vw] xl:w-[70vw]
-                h-auto md:h-full
-                px-6 md:px-16 lg:px-24
-                py-10 md:py-0
-                flex items-center justify-center
-                ${index < projects.length - 1 ? 'border-r border-white/5 md:pr-32 lg:pr-48' : ''}
-            `}
+        // stack-card: normal block on mobile (vertical list); absolute layer on
+        // desktop, where GSAP slides each one in to stack horizontally.
+        <div
+            className="stack-card relative md:absolute md:inset-0 flex items-center justify-center px-4 md:px-8 py-8 md:py-0"
+            style={{ zIndex: index }}
         >
             <div
                 className="
-                    w-full h-full max-w-7xl
-                    grid grid-cols-1 md:grid-cols-2
-                    gap-8 md:gap-16
-                    items-center
-                    pb-24 md:pb-32
+                    relative w-full max-w-6xl mx-auto
+                    rounded-2xl md:rounded-3xl
+                    border border-white/10 bg-[#0a0a0a]
+                    shadow-[0_20px_80px_rgba(0,0,0,0.8)]
+                    overflow-hidden
+                    p-6 md:p-10 lg:p-14
                 "
             >
+                {/* Oversized index number — design nod, kept in your theme */}
+                <span className="pointer-events-none absolute -top-4 right-4 md:right-8 font-display font-bold text-white/[0.04] text-[110px] md:text-[200px] leading-none select-none z-0">
+                    {String(index + 1).padStart(2, '0')}
+                </span>
+
+                <div
+                    className="
+                        relative z-10
+                        grid grid-cols-1 md:grid-cols-2
+                        gap-8 md:gap-12
+                        items-center
+                    "
+                >
                 {/* Left: Text */}
                 <div className="space-y-4 md:space-y-6">
                     <div className="space-y-2 md:space-y-4">
@@ -195,14 +203,14 @@ function ProjectCard({ project, index }) {
                         ))}
                     </div>
 
-                    <div className="flex flex-wrap gap-3 pt-2">
-                        <motion.a
+                    <div className="flex flex-wrap gap-3 pt-2">                        <motion.a
                             href={project.links.code}
                             target="_blank"
                             rel="noreferrer"
                             whileHover={{ scale: 1.02, y: -2 }}
                             whileTap={{ scale: 0.98 }}
                             className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-sm bg-white text-black font-bold text-sm tracking-wide shadow-[0_0_15px_rgba(255,255,255,0.1)] hover:shadow-[0_0_25px_rgba(255,255,255,0.3)] transition-all duration-300"
+                            data-guide="View the source code of this project on GitHub."
                         >
                             <Github size={16} />
                             Source
@@ -217,6 +225,7 @@ function ProjectCard({ project, index }) {
                                 whileHover={{ scale: 1.02, y: -2 }}
                                 whileTap={{ scale: 0.98 }}
                                 className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-sm bg-[#111] border border-white/10 text-white font-bold text-sm tracking-wide shadow-lg hover:border-purple-500/50 hover:bg-purple-500/10 transition-all duration-300"
+                                data-guide="Click to view the live deployed site of this project."
                             >
                                 Live Demo
                                 <ArrowUpRight size={16} />
@@ -224,6 +233,7 @@ function ProjectCard({ project, index }) {
                         ) : (
                             <motion.div
                                 className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-sm bg-[#0a0a0a] border border-white/5 text-gray-500 font-bold text-sm tracking-wide cursor-not-allowed"
+                                data-guide="The live demo for this project will be uploaded soon."
                             >
                                 <span className="w-2 h-2 rounded-full bg-purple-400/30" />
                                 Demo Soon
@@ -233,16 +243,18 @@ function ProjectCard({ project, index }) {
                         <Link
                             to={`/project/${projectId}`}
                             className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-sm bg-gradient-to-r from-purple-600 to-cyan-600 text-white font-bold text-sm tracking-wide shadow-[0_0_15px_rgba(124,58,237,0.3)] hover:shadow-[0_0_25px_rgba(124,58,237,0.5)] transition-all duration-300 group cursor-pointer"
+                            data-guide="View detailed information, features, and specs for this project."
                         >
                             View Details
                             <ArrowUpRight size={16} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
                         </Link>
                     </div>
 
-                    <div className="flex flex-wrap gap-3 pt-1">
+                    <div className="flex flex-wrap gap-3 pt-2">
                         <Link
                             to={`/project/${projectId}?tab=architecture`}
                             className="inline-flex items-center gap-2 px-3 py-1.5 rounded-sm bg-transparent border border-white/5 text-gray-400 font-mono text-xs hover:text-cyan-400 hover:border-cyan-500/30 transition-all duration-300 cursor-pointer"
+                            data-guide="Explore the modular system architecture diagram."
                         >
                             <Cpu size={14} />
                             _architecture
@@ -251,6 +263,7 @@ function ProjectCard({ project, index }) {
                         <Link
                             to={`/project/${projectId}?tab=workflow`}
                             className="inline-flex items-center gap-2 px-3 py-1.5 rounded-sm bg-transparent border border-white/5 text-gray-400 font-mono text-xs hover:text-purple-400 hover:border-purple-500/30 transition-all duration-300 cursor-pointer"
+                            data-guide="View developer workflow mapping diagrams."
                         >
                             <GitBranch size={14} />
                             _workflow
@@ -262,7 +275,7 @@ function ProjectCard({ project, index }) {
                 <motion.div
                     whileHover={{ scale: 1.01 }}
                     transition={{ duration: 0.4 }}
-                    className="relative w-full aspect-[16/11] md:aspect-auto md:h-[65vh] rounded-sm overflow-hidden border border-white/10 bg-[#0a0a0a] shadow-2xl group cursor-pointer group-hover:border-cyan-500/30"
+                    className="relative w-full aspect-[16/11] md:aspect-auto md:h-[46vh] rounded-sm overflow-hidden border border-white/10 bg-[#0a0a0a] shadow-2xl group cursor-pointer group-hover:border-cyan-500/30"
                 >
                     <Link to={`/project/${projectId}`} className="block absolute inset-0 w-full h-full">
                         {/* Scanline overlay */}
@@ -287,86 +300,87 @@ function ProjectCard({ project, index }) {
                         </div>
                     </Link>
                 </motion.div>
+                </div>
             </div>
-        </article>
+        </div>
     );
 }
 
 const Projects = () => {
-    const wrapperRef = useRef(null);
-    const containerRef = useRef(null);
+    const sectionRef = useRef(null);
+    const pinRef = useRef(null);
 
     useLayoutEffect(() => {
-        const wrapper = wrapperRef.current;
-        const container = containerRef.current;
-        if (!wrapper || !container) return;
+        const ctx = gsap.context(() => {
+            const mm = gsap.matchMedia();
 
-        /**
-         * ScrollTrigger.matchMedia gives us an easy, reliable way to:
-         * - enable the pinned horizontal scroll on desktop (>=768px)
-         * - disable it on mobile (<768px) and fall back to normal vertical flow
-         * It also handles cleanup automatically when the media query changes.
-         */
-        const mm = ScrollTrigger.matchMedia();
+            // Desktop: pin the viewport and slide each card in to stack
+            // horizontally, one over the previous, shrinking the covered ones.
+            mm.add("(min-width: 768px)", () => {
+                const cards = gsap.utils.toArray(".stack-card");
+                if (!cards.length) return;
 
-        mm.add("(min-width: 768px)", () => {
-            const getScrollDistance = () => Math.max(0, container.scrollWidth - window.innerWidth);
+                // First card already centered; the rest wait off-screen right.
+                gsap.set(cards.slice(1), { xPercent: 110, opacity: 1 });
 
-            // IMPORTANT:
-            // Do NOT manually set wrapper height here.
-            // ScrollTrigger's pinSpacing creates the exact amount of scrollable space between start/end.
-            // Manually increasing height causes extra blank space after the last card.
-            wrapper.style.height = "auto";
-            gsap.set(container, { x: 0 });
+                const tl = gsap.timeline({
+                    scrollTrigger: {
+                        trigger: pinRef.current,
+                        start: "top top",
+                        // ~80vh of scroll per incoming card.
+                        end: () => `+=${(cards.length - 1) * window.innerHeight * 0.8}`,
+                        pin: true,
+                        scrub: 1,
+                        anticipatePin: 1,
+                        invalidateOnRefresh: true,
+                    },
+                });
 
-            const tween = gsap.to(container, {
-                // Translate X from 0 to -(scrollWidth - viewportWidth)
-                // This moves the container exactly enough to show the last card fully
-                x: () => -getScrollDistance(),
-                ease: "none", // keep it smooth and 1:1 with scroll
-                scrollTrigger: {
-                    trigger: wrapper,
-                    start: "top top",
-                    // End exactly when horizontal scroll completes (when last card is fully visible)
-                    // No extra buffer - unpin immediately when scroll distance is reached
-                    // Divided by 2 to make horizontal scrolling twice as fast (show ~2 projects per scroll)
-                    end: () => `+=${getScrollDistance() / 1.5}`, // Adjusted for wider cards
-                    scrub: 1, // Smoother scrub
-                    pin: true, // pin the wrapper (which contains only the cards now)
-                    anticipatePin: 1,
-                    invalidateOnRefresh: true,
-                    pinSpacing: true // Ensures proper spacing when pinned/unpinned
-                }
+                cards.forEach((card, i) => {
+                    if (i === 0) return;
+                    const pos = i - 1; // contiguous segments, no dead gaps
+                    // Incoming card slides over the stack...
+                    tl.fromTo(
+                        card,
+                        { xPercent: 110 },
+                        { xPercent: 0, duration: 1, ease: "power2.out" },
+                        pos
+                    );
+                    // ...while every card already in the stack shrinks + drifts
+                    // left a touch, so their edges peek out behind the new one.
+                    tl.to(
+                        cards.slice(0, i),
+                        {
+                            scale: (idx) => 1 - (i - idx) * 0.04,
+                            xPercent: (idx) => -(i - idx) * 4,
+                            duration: 1,
+                            ease: "power2.out",
+                        },
+                        pos
+                    );
+                });
+
+                ScrollTrigger.refresh();
+
+                return () => tl.scrollTrigger?.kill();
             });
 
-            // Ensure measurements are correct (esp. after fonts/images settle)
-            ScrollTrigger.refresh();
+            // Mobile: cards fall back to a normal vertical list (no pin).
+            mm.add("(max-width: 767px)", () => {
+                gsap.set(".stack-card", { clearProps: "all" });
+                return () => { };
+            });
+        }, sectionRef);
 
-            // Cleanup when leaving desktop mode or unmounting
-            return () => {
-                tween.scrollTrigger?.kill();
-                tween.kill();
-                wrapper.style.height = "auto";
-                gsap.set(container, { clearProps: "transform" });
-            };
-        });
-
-        mm.add("(max-width: 767px)", () => {
-            // Mobile: no pinning, no forced transforms, normal vertical list.
-            wrapper.style.height = "auto";
-            gsap.set(container, { clearProps: "transform" });
-            return () => { };
-        });
-
-        return () => {
-            mm.revert();
-        };
+        return () => ctx.revert();
     }, []);
 
     return (
         <section
+            ref={sectionRef}
             id="projects"
-            className="w-full relative overflow-hidden bg-[#050505]"
+            className="w-full relative bg-[#050505]"
+            data-guide="Scroll to explore my featured projects. Cards will stack dynamically as you scroll."
         >
             {/* Minimalist Tech Background */}
             <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.015)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.015)_1px,transparent_1px)] bg-[size:60px_60px] pointer-events-none z-0" />
@@ -400,30 +414,19 @@ const Projects = () => {
                 </div>
             </div>
 
-            {/* Pinned wrapper - ONLY contains the project cards */}
+            {/* Pinned viewport. On desktop the cards are absolutely stacked and
+                GSAP slides them in horizontally; on mobile they flow vertically. */}
             <div
-                ref={wrapperRef}
-                className="
-                    projects-wrapper
-                    w-full relative overflow-hidden
-                "
+                ref={pinRef}
+                className="relative w-full md:h-screen md:overflow-hidden"
             >
-                {/* Viewport container - this gets pinned, stays at viewport height */}
-                <div className="h-screen w-full flex items-center md:block">
-                    <div
-                        ref={containerRef}
-                        className="
-                            projects-container
-                            flex flex-col md:flex-row
-                            h-full md:h-screen w-full
-                            will-change-transform
-                        "
-                    >
-                        {projects.map((project, index) => (
-                            <ProjectCard key={project.title} project={project} index={index} />
-                        ))}
-                    </div>
-                </div>
+                {projects.map((project, index) => (
+                    <ProjectCard
+                        key={project.title}
+                        project={project}
+                        index={index}
+                    />
+                ))}
             </div>
         </section>
     );

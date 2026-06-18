@@ -98,6 +98,7 @@ const Skills = () => {
                                 exit={{ opacity: 0, scale: 1.05 }}
                                 transition={{ duration: 0.4 }}
                                 className="w-full h-full absolute inset-0"
+                                data-guide="Explore the interactive 3D constellation. Click/drag to rotate, scroll to zoom. Not understanding it? Toggle 'Normal View' above."
                             >
                                 <SkillConstellation />
                             </motion.div>
@@ -109,6 +110,7 @@ const Skills = () => {
                                 exit={{ opacity: 0, y: -20 }}
                                 transition={{ duration: 0.4 }}
                                 className="w-full h-full relative z-10 px-4"
+                                data-guide="Browse my skills arranged as a clean, structured grid."
                             >
                                 <SkillStatic />
                             </motion.div>

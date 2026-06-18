@@ -37,6 +37,7 @@ function DockIcon({ item }) {
             activeClass="active-nav-item text-white"
             spy={true}
             className="group relative flex items-center justify-center w-12 h-12 md:w-14 md:h-14 rounded-full text-gray-400 hover:text-white hover:bg-white/5 transition-all duration-300 cursor-pointer overflow-hidden"
+            data-guide={`Smooth scroll to the ${item.name} section.`}
         >
             {/* Active Background Glow */}
             <div className="absolute inset-0 bg-transparent group-[.active-nav-item]:bg-white/10 transition-colors duration-300" />

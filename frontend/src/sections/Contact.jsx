@@ -142,6 +142,7 @@ const Contact = () => {
                                             onBlur={() => setIsFocused('')}
                                             disabled={status === 'sending'}
                                             delay={0}
+                                            guide="Enter your name to initiate WhatsApp chat."
                                         />
                                         <FloatingInput
                                             label="your_email"
@@ -154,6 +155,7 @@ const Contact = () => {
                                             onBlur={() => setIsFocused('')}
                                             disabled={status === 'sending'}
                                             delay={0.1}
+                                            guide="Enter your email address so I can get in touch with you."
                                         />
                                         <FloatingInput
                                             label="your_message"
@@ -166,9 +168,10 @@ const Contact = () => {
                                             onBlur={() => setIsFocused('')}
                                             disabled={status === 'sending'}
                                             delay={0.2}
+                                            guide="Type your message details here."
                                         />
 
-                                        <div className="pt-8 flex justify-end">
+                                        <div className="pt-8 flex justify-end" data-guide="Click to transmit this message directly to my WhatsApp.">
                                             <CyberTransmitButton isSending={status === 'sending'} />
                                         </div>
                                     </form>
@@ -211,39 +214,42 @@ const ContactItem = ({ icon, title, value, link }) => {
     );
 
     return (
-        <div className="flex items-center justify-between group p-3 rounded-sm transition-all bg-[#0a0a0a] border border-transparent hover:border-white/10 hover:shadow-lg">
-            {link ? (
-                <a
-                    href={link}
-                    target={link.startsWith('http') ? "_blank" : undefined}
-                    rel={link.startsWith('http') ? "noopener noreferrer" : undefined}
-                    className="flex-1 cursor-pointer"
-                >
-                    {content}
-                </a>
-            ) : (
-                <div className="flex-1">
-                    {content}
-                </div>
-            )}
-
-            <button
-                onClick={handleCopy}
-                className="p-3 text-gray-500 hover:text-cyan-400 bg-transparent rounded-sm transition-all hover:bg-cyan-500/10"
-                title="Copy to clipboard"
-            >
-                {copied ? <Check size={18} className="text-green-400" /> : <Copy size={18} />}
-            </button>
-        </div>
-    );
+                                        <div className="flex items-center justify-between group p-3 rounded-sm transition-all bg-[#0a0a0a] border border-transparent hover:border-white/10 hover:shadow-lg">
+                                            {link ? (
+                                                <a
+                                                    href={link}
+                                                    target={link.startsWith('http') ? "_blank" : undefined}
+                                                    rel={link.startsWith('http') ? "noopener noreferrer" : undefined}
+                                                    className="flex-1 cursor-pointer"
+                                                    data-guide={`Click to launch connection using this contact info.`}
+                                                >
+                                                    {content}
+                                                </a>
+                                            ) : (
+                                                <div className="flex-1" data-guide={`Contact point: ${value}`}>
+                                                    {content}
+                                                </div>
+                                            )}
+                                 
+                                            <button
+                                                onClick={handleCopy}
+                                                className="p-3 text-gray-500 hover:text-cyan-400 bg-transparent rounded-sm transition-all hover:bg-cyan-500/10"
+                                                title="Copy to clipboard"
+                                                data-guide="Copy to clipboard."
+                                            >
+                                                {copied ? <Check size={18} className="text-green-400" /> : <Copy size={18} />}
+                                            </button>
+                                        </div>
+                                    );
 };
 
-const FloatingInput = ({ label, name, type, value, onChange, isFocused, onFocus, onBlur, disabled, delay }) => {
+const FloatingInput = ({ label, name, type, value, onChange, isFocused, onFocus, onBlur, disabled, delay, guide }) => {
     return (
         <motion.div
             animate={{ y: [0, -2, 0] }}
             transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay }}
             className="relative w-full"
+            data-guide={guide}
         >
             <div className="relative group w-full flex flex-col pt-6">
                 <label className={`absolute left-0 transition-all duration-300 font-mono text-sm pointer-events-none flex items-center gap-2 ${isFocused || value ? 'top-0 text-cyan-400' : 'top-8 text-gray-500'}`}>
