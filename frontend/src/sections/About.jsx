@@ -1,6 +1,66 @@
-import { motion } from 'framer-motion';
+import { motion, useScroll, useSpring } from 'framer-motion';
+import { useRef } from 'react';
+import { Canvas, useFrame } from '@react-three/fiber';
+import { Float } from '@react-three/drei';
 import { Coffee, Sparkles, Cpu, MapPin, GraduationCap, Activity, Zap } from 'lucide-react';
 import { EASE } from '../lib/motion';
+import MaskReveal from '../components/MaskReveal';
+
+/* ----------------------------------------------------------------------
+   Scroll-reactive 3D scene (maximum / dramatic).
+   A cluster of wireframe solids whose rotation, spread and zoom are
+   driven by the section's scroll progress (a framer-motion MotionValue
+   read inside the r3f frame loop) layered on top of a slow idle spin.
+---------------------------------------------------------------------- */
+function ScrollScene({ progress }) {
+    const group = useRef();
+    const camRig = useRef();
+
+    useFrame((state, delta) => {
+        const p = progress.get();              // 0 → 1 across the section
+        const t = state.clock.elapsedTime;
+
+        if (group.current) {
+            // Gentle scroll-linked rotation + slow idle drift.
+            group.current.rotation.y = t * 0.08 + p * Math.PI * 0.9;
+            group.current.rotation.x = Math.sin(t * 0.15) * 0.15 + p * Math.PI * 0.35;
+            // Subtle zoom, eased toward target.
+            const targetZ = -1 + Math.sin(p * Math.PI) * 2;
+            group.current.position.z += (targetZ - group.current.position.z) * Math.min(1, delta * 3);
+            group.current.scale.setScalar(0.7 + Math.sin(p * Math.PI) * 0.25);
+        }
+        if (camRig.current) {
+            // Soft parallax sway.
+            camRig.current.position.x = Math.sin(t * 0.2) * 0.6 + (p - 0.5) * 1.5;
+            camRig.current.position.y = Math.cos(t * 0.18) * 0.4 - (p - 0.5) * 1.2;
+        }
+    });
+
+    return (
+        <group ref={camRig}>
+            <group ref={group}>
+                <Float speed={1.2} rotationIntensity={0.5} floatIntensity={1}>
+                    <mesh>
+                        <icosahedronGeometry args={[3, 0]} />
+                        <meshBasicMaterial color="#a855f7" wireframe transparent opacity={0.5} />
+                    </mesh>
+                    <mesh scale={1.6} rotation={[0.5, 0.5, 0]}>
+                        <octahedronGeometry args={[3, 0]} />
+                        <meshBasicMaterial color="#06b6d4" wireframe transparent opacity={0.3} />
+                    </mesh>
+                    <mesh scale={2.3} rotation={[0.3, 0.8, 0.2]}>
+                        <dodecahedronGeometry args={[2.2, 0]} />
+                        <meshBasicMaterial color="#9a8fe0" wireframe transparent opacity={0.18} />
+                    </mesh>
+                    <mesh>
+                        <torusGeometry args={[4.2, 0.05, 16, 100]} />
+                        <meshBasicMaterial color="#06b6d4" transparent opacity={0.4} />
+                    </mesh>
+                </Float>
+            </group>
+        </group>
+    );
+}
 
 /* ---------------- Strong morph variants ---------------- */
 const grid = {
@@ -37,29 +97,54 @@ const Card = ({ className = '', children, hover = true }) => (
 );
 
 const About = () => {
+    const sectionRef = useRef(null);
+
+    // Scroll progress across the section drives the decorative 3D canvas.
+    const { scrollYProgress } = useScroll({
+        target: sectionRef,
+        offset: ['start end', 'end start'],
+    });
+    const smooth = useSpring(scrollYProgress, { stiffness: 80, damping: 20, mass: 0.5 });
+
     return (
-        <section id="about" className="w-full min-h-screen flex items-center justify-center px-6 py-24 relative overflow-hidden bg-background">
+        <section
+            ref={sectionRef}
+            id="about"
+            className="w-full min-h-screen flex items-center justify-center px-6 py-24 relative overflow-hidden bg-background"
+        >
 
             {/* Minimalist grid background */}
             <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none z-0" />
 
+            {/* Scroll-reactive 3D wireframe cluster */}
+            <div className="absolute inset-0 z-0 opacity-30 mix-blend-screen pointer-events-none">
+                <Canvas camera={{ position: [0, 0, 12], fov: 55 }} dpr={[1, 2]}>
+                    <ambientLight intensity={0.6} />
+                    <ScrollScene progress={smooth} />
+                </Canvas>
+            </div>
+
             <div className="max-w-6xl w-full mx-auto relative z-10">
 
                 {/* Section heading */}
-                <motion.div
-                    initial={{ opacity: 0, y: 24, filter: 'blur(8px)' }}
-                    whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                    viewport={{ once: false, margin: '-100px' }}
-                    transition={{ duration: 0.7, ease: EASE }}
-                    className="mb-10"
-                >
-                    <h2 className="text-4xl md:text-6xl font-display font-bold mb-3 flex items-center gap-3">
-                        <span className="text-purple-500 font-mono text-3xl font-normal">{'<'}</span>
-                        About <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-cyan-400">Me</span>
-                        <span className="text-purple-500 font-mono text-3xl font-normal">{'>'}</span>
+                <div className="mb-10">
+                    <h2 className="text-4xl md:text-6xl font-display font-bold mb-3">
+                        <MaskReveal>
+                            <span className="flex items-center gap-3">
+                                <span className="text-purple-500 font-mono text-3xl font-normal">{'<'}</span>
+                                About <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-cyan-400">Me</span>
+                                <span className="text-purple-500 font-mono text-3xl font-normal">{'>'}</span>
+                            </span>
+                        </MaskReveal>
                     </h2>
-                    <div className="h-[2px] w-24 bg-gradient-to-r from-purple-500 to-cyan-500" />
-                </motion.div>
+                    <motion.div
+                        initial={{ scaleX: 0 }}
+                        whileInView={{ scaleX: 1 }}
+                        viewport={{ once: true, amount: 0.8 }}
+                        transition={{ duration: 0.7, ease: EASE, delay: 0.3 }}
+                        className="h-[2px] w-24 origin-left bg-gradient-to-r from-purple-500 to-cyan-500"
+                    />
+                </div>
 
                 {/* Bento grid */}
                 <motion.div

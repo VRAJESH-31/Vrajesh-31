@@ -4,6 +4,7 @@ import { Canvas, useFrame } from '@react-three/fiber';
 import { Float, Center, PerspectiveCamera, OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
 import { Calendar, MapPin, Briefcase, Award, Terminal } from 'lucide-react';
+import MaskReveal from '../components/MaskReveal';
 
 // 3D Geometric Wireframe Component (Replaces playful Orbs)
 function GeometricWireframe() {
@@ -39,10 +40,27 @@ const Experience = () => {
 
     const experiences = [
         {
+            title: "Genda Phool",
+            role: "Full Stack Developer Intern",
+            location: "Akshar Chowk, Vadodara, Gujarat",
+            period: "21st May 2026 – Present",
+            type: "current",
+            achievements: [
+                "Architected a multi-tenant Event CRM with role-based access control (RBAC) and strict tenant isolation using React, Fastify, TypeScript, PostgreSQL, and Prisma.",
+                "Engineered third-party integrations including Google Calendar sync, Google Sheets import automation, and OAuth2 authentication flows.",
+                "Integrated Meta Lead Ads webhooks, WhatsApp APIs, and MinIO object storage to streamline automated lead capture and media management.",
+                "Built financial tracking, vendor management, quotation workflows, and client RSVP portals to support end-to-end event operations."
+            ],
+            icon: <Briefcase className="w-5 h-5" />,
+            color: "from-cyan-500 to-purple-500",
+            borderColor: "border-purple-500/30",
+            hoverBorder: "hover:border-purple-400"
+        },
+        {
             title: "Protap Club",
             role: "Full Stack Developer",
             location: "Vadodara, Gujarat",
-            period: "Jan 2026 – Present",
+            period: "5th Jan 2026 – 15th May 2026",
             type: "current",
             achievements: [
                 "Architected an NFC-enabled attendance backend fully integrated with the college ERP system, successfully automating student attendance tracking.",
@@ -82,10 +100,14 @@ const Experience = () => {
                     className="text-center mb-20"
                 >
                     <div className="inline-flex flex-col items-center">
-                        <h2 className="text-4xl md:text-6xl font-display font-bold mb-2 flex items-center gap-3">
-                            <span className="text-cyan-500 font-mono text-3xl font-normal">{'<'}</span>
-                            Work <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-cyan-400">Experience</span>
-                            <span className="text-cyan-500 font-mono text-3xl font-normal">{'>'}</span>
+                        <h2 className="text-4xl md:text-6xl font-display font-bold mb-2">
+                            <MaskReveal className="text-center">
+                                <span className="inline-flex items-center justify-center gap-3">
+                                    <span className="text-cyan-500 font-mono text-3xl font-normal">{'<'}</span>
+                                    Work <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-cyan-400">Experience</span>
+                                    <span className="text-cyan-500 font-mono text-3xl font-normal">{'>'}</span>
+                                </span>
+                            </MaskReveal>
                         </h2>
                         <div className="h-[2px] w-full max-w-[200px] bg-gradient-to-r from-purple-500 to-cyan-500 mt-2" />
                     </div>
