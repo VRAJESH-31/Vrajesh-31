@@ -204,12 +204,18 @@ const About = () => {
                                 <div className="text-xs font-mono text-gray-500">vrajesh_config.ts</div>
                                 <div className="w-12" />
                             </div>
-                            <div className="flex-1 bg-[#0a0a0a] flex items-center justify-center p-8 md:p-12 overflow-hidden">
-                                <div className="w-full max-w-sm aspect-video rounded-2xl border border-white/10 overflow-hidden shadow-2xl">
+                            <div className="flex-1 bg-[#0a0a0a] flex items-center justify-center p-6 md:p-8 overflow-hidden">
+                                <div className="w-full max-w-[280px] md:max-w-sm aspect-[3/2] rounded-2xl border border-white/10 overflow-hidden shadow-2xl relative bg-black/40">
+                                    {/* Ambient blurred glow behind the GIF to fill the wider container */}
+                                    <img 
+                                        src="https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExZTZ1cnF2YXA0YzA2ajJ2c2xmdW01eTBkdW53emQ5bzgybnB4MTEzeiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/1PB2ZpDj3CwPtaUW1l/giphy.gif" 
+                                        alt=""
+                                        className="absolute inset-0 w-full h-full object-cover blur-xl opacity-30 scale-110 pointer-events-none"
+                                    />
                                     <img 
                                         src="https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExZTZ1cnF2YXA0YzA2ajJ2c2xmdW01eTBkdW53emQ5bzgybnB4MTEzeiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/1PB2ZpDj3CwPtaUW1l/giphy.gif" 
                                         alt="vrajesh_config"
-                                        className="w-full h-full object-cover"
+                                        className="relative z-10 w-full h-full object-contain"
                                     />
                                 </div>
                             </div>
